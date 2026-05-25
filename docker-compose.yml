@@ -1,0 +1,96 @@
+version: '3.8'
+
+# 1. Criação de uma rede customizada para isolamento de segurança
+networks:
+  confeitaria_net:
+    driver: bridge
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: confeitaria-db
+    restart: unless-stopped # Melhor que 'always', não reinicia se você parar manualmente
+    # 2. Otimização do MySQL: Limita o cache interno do banco para consumir menos RAM
+    command: --innodb-buffer-pool-size=128M --max-connections=50
+    environment:
+      MYSQL_DATABASE: confeitaria_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - confeitaria_net
+    # 3. Healthcheck: O Docker agora testa se o banco realmente iniciou antes de subir a API
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # 4. Limite estrito de recursos do container
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5' # Usa no máximo meia CPU
+          memory: 350M # Trava o limite do container
+    # 5. Rotação de logs para não estourar o HD
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  backend:
+    build: ./backend
+    container_name: confeitaria-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:-jdbc:mysql://db:3306/confeitaria_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:-root}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:-root_password}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-nalvasalgados62}
+      - JWT_SECRET=${JWT_SECRET:-change_this_secret_for_production}
+      - SERVER_PORT=${SERVER_PORT:-8080}
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms128m 
+    depends_on:
+      db:
+        condition: service_healthy # Só sobe o Java quando o MySQL der o "OK" no healthcheck
+    networks:
+      - confeitaria_net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build: ./frontend
+    container_name: confeitaria-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - confeitaria_net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 128M # O Nginx consome muito pouco, não precisa de muita RAM
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mysql_data:

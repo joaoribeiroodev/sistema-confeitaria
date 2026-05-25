@@ -1,0 +1,39 @@
+<div class="min-h-screen bg-stone-50 flex items-center justify-center p-4 font-sans animate-fade-in">
+  <div class="max-w-md w-full bg-white rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 relative overflow-hidden">
+
+    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-rose-100 to-orange-100 rounded-bl-[80px] -z-10"></div>
+
+    <div class="text-center mb-8">
+      <span class="text-3xl">🔐</span>
+      <h2 class="text-3xl font-black text-stone-800 mt-2">Painel de Controle</h2>
+      <p class="text-stone-500 text-sm mt-1">Insira suas credenciais administrativas</p>
+    </div>
+
+    <form (ngSubmit)="fazerLogin()" class="space-y-5">
+      <div class="space-y-1.5">
+        <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider pl-1">Usuário</label>
+        <input type="text" [(ngModel)]="username" name="username" required placeholder="Digite o usuário"
+               class="w-full p-3.5 bg-stone-50 border-2 border-stone-100 rounded-2xl focus:bg-white focus:border-rose-400 outline-none transition-all text-stone-700">
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="block text-xs font-bold text-stone-600 uppercase tracking-wider pl-1">Senha</label>
+        <input type="password" [(ngModel)]="password" name="password" required placeholder="••••••••"
+               class="w-full p-3.5 bg-stone-50 border-2 border-stone-100 rounded-2xl focus:bg-white focus:border-rose-400 outline-none transition-all text-stone-700">
+      </div>
+
+      <p *ngIf="erroMensagem" class="text-sm text-red-500 font-semibold pl-1 animate-pulse">❌ {{ erroMensagem }}</p>
+
+      <button type="submit"
+              class="w-full bg-stone-900 text-white font-black text-lg p-4 rounded-2xl hover:bg-stone-800 transition-all shadow-lg active:scale-[0.99] cursor-pointer mt-2">
+        Entrar no Sistema
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <a routerLink="/" class="text-xs font-bold text-stone-400 hover:text-stone-600 transition-colors">
+        ← Voltar para a Loja
+      </a>
+    </div>
+  </div>
+</div>

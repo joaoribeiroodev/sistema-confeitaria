@@ -1,0 +1,14 @@
+.dashboard-hero {
+  background: radial-gradient(circle at top left, rgba(236, 72, 153, 0.18), transparent 28%),
+              radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.12), transparent 26%);
+}
+
+.dashboard-card {
+  border-radius: 2rem;
+}
+
+@media (max-width: 640px) {
+  .dashboard-grid-mobile {
+    grid-template-columns: 1fr;
+  }
+}

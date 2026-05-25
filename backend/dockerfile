@@ -1,0 +1,15 @@
+# Estágio 1: Build da aplicação com Maven
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Estágio 2: Execução com JRE leve e otimização de memória
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+# Limitação estrita de memória para rodar liso no plano gratuito depois
+ENV JAVA_OPTS="-Xmx256m -Xms128m"
+EXPOSE 8080
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
