@@ -33,7 +33,7 @@ public class ConfeitariaApplication {
                     criarProduto("Salgados Congelados(todos)", 1.80, Categoria.SALGADOS_FRITOS),
                     
                     // salgados assados
-                    criarProduto("Empada de Frango", 95.00, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Empada de Frango", 1.80, Categoria.SALGADOS_ASSADOS),
                     criarProduto("Barquete", 1.80, Categoria.SALGADOS_ASSADOS),
                     criarProduto("Saltenha", 1.80, Categoria.SALGADOS_ASSADOS),
                     criarProduto("Empada", 1.80, Categoria.SALGADOS_ASSADOS),
