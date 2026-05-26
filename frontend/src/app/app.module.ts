@@ -7,7 +7,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { OrderComponent } from './components/order/order.component';
 import { AdminLoginComponent } from './components/admin-login/admin-login.component';
-import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component'; // 👈 Verifique se o caminho bate com o do seu VS Code
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({

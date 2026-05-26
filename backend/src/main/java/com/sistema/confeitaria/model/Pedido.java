@@ -1,5 +1,6 @@
 package com.sistema.confeitaria.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
@@ -23,6 +24,8 @@ public class Pedido {
     private Double valorTotal;
     private String status = "PENDENTE";
 
+    // O @JsonIgnore impede que o Spring tente ler os itens vazios e cause o erro 500 no histórico
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "pedido_id")
     private List<ItemPedido> itens;

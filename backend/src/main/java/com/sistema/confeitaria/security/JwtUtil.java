@@ -46,7 +46,15 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.out.println("❌ [JWT ERROR] Token expirado! Verifique o fuso horário (TZ) do container Docker ou o tempo de expiração.");
+            System.out.println("Detalhes: " + e.getMessage());
+            return false;
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            System.out.println("❌ [JWT ERROR] Assinatura inválida! A chave secreta (jwt.secret) mudou ou está inconsistente.");
+            return false;
         } catch (Exception e) {
+            System.out.println("❌ [JWT ERROR] Falha crítica na validação do token: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             return false;
         }
     }
