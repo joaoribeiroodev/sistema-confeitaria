@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS clientes (
 CREATE TABLE IF NOT EXISTS produtos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    descricao TEXT,
     preco_unitario DECIMAL(10,2) NOT NULL,
     categoria ENUM('SALGADOS_FRITOS', 'SALGADOS_ASSADOS', 'DOCES_FINOS', 'DOCES_SIMPLES') NOT NULL
 );
@@ -34,6 +33,7 @@ CREATE TABLE IF NOT EXISTS itens_pedido (
     produto_id BIGINT,
     quantidade INT NOT NULL,
     preco_praticado DECIMAL(10,2) NOT NULL,
+    sabor VARCHAR(50) DEFAULT NULL,
     FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );

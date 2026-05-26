@@ -6,8 +6,10 @@ import com.sistema.confeitaria.repository.PedidoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,25 +26,33 @@ public class DashboardService {
     }
 
     public DashboardMetricsDTO calcularMetricasMensais() {
-        LocalDate inicioMes = LocalDate.now().withDayOfMonth(1);
-        LocalDate fimMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        // Uso do YearMonth para deixar o código mais seguro e sem cálculo manual de dias
+        LocalDate inicioMes = YearMonth.now().atDay(1);
+        LocalDate fimMes = YearMonth.now().atEndOfMonth();
 
         BigDecimal faturamento = pedidoRepository.calcularFaturamentoPeriodo(inicioMes, fimMes);
         if (faturamento == null) faturamento = BigDecimal.ZERO;
 
-        List<Map<String, Object>> picos = mapResultSet(pedidoRepository.buscarPicosDeVenda(inicioMes, fimMes), new String[]{"data", "vendas"});
-        List<Map<String, Object>> maisVendidos = mapResultSet(pedidoRepository.buscarProdutosMaisVendidos(inicioMes, fimMes), new String[]{"nome", "quantidade"});
+        List<Map<String, Object>> picos = mapResultSet(
+            pedidoRepository.buscarPicosDeVenda(inicioMes, fimMes), 
+            new String[]{"data", "vendas"}
+        );
+        List<Map<String, Object>> maisVendidos = mapResultSet(
+            pedidoRepository.buscarProdutosMaisVendidos(inicioMes, fimMes), 
+            new String[]{"nome", "quantidade"}
+        );
 
         return new DashboardMetricsDTO(faturamento, picos, maisVendidos);
     }
 
-    public Page<?> listarPedidosPaginados(Pageable pageable) {
+    // Alterado para Page<Pedido> alinhando com as boas práticas do Controller
+    public Page<Pedido> listarPedidosPaginados(Pageable pageable) {
         return pedidoRepository.findAll(pageable);
     }
 
     public String gerarCsvMesCorrente() {
-        LocalDate inicioMes = LocalDate.now().withDayOfMonth(1);
-        LocalDate fimMes = LocalDate.now().plusMonths(1).withDayOfMonth(1).minusDays(1);
+        LocalDate inicioMes = YearMonth.now().atDay(1);
+        LocalDate fimMes = YearMonth.now().atEndOfMonth();
 
         List<Pedido> pedidosDoMes = pedidoRepository.findByDataEncomendaBetween(inicioMes, fimMes);
 
@@ -53,11 +63,16 @@ public class DashboardService {
 
         for (Pedido pedido : pedidosDoMes) {
             String nomeCliente = pedido.getCliente() != null ? pedido.getCliente().getNome() : "-";
+            
+            // Formatando o decimal de ponto para vírgula (Padrão PT-BR no Excel)
+            String valorTotalFormatado = pedido.getValorTotal() != null ? 
+                pedido.getValorTotal().toString().replace(".", ",") : "0,00";
+
             csv.append(pedido.getId()).append(";")
                .append(nomeCliente).append(";")
                .append(pedido.getDataEncomenda().format(formatter)).append(";")
                .append(pedido.getHorarioEncomenda()).append(";")
-               .append(pedido.getValorTotal()).append("\n");
+               .append(valorTotalFormatado).append("\n");
         }
         return csv.toString();
     }

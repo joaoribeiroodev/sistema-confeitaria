@@ -8,6 +8,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class ConfeitariaApplication {
 
@@ -19,13 +21,55 @@ public class ConfeitariaApplication {
     CommandLineRunner initDatabase(ProdutoRepository repository) {
         return args -> {
             if (repository.count() == 0) {
-                Produto p1 = new Produto(); p1.setNome("Coxinha de Frango"); p1.setDescricao("Cento frito na hora"); p1.setPrecoUnitario(80.00); p1.setCategoria(Categoria.SALGADOS_FRITOS);
-                Produto p2 = new Produto(); p2.setNome("Empada de Frango"); p2.setDescricao("Salgado assado super recheado"); p2.setPrecoUnitario(95.00); p2.setCategoria(Categoria.SALGADOS_ASSADOS);
-                Produto p3 = new Produto(); p3.setNome("Camafeu de Nozes"); p3.setDescricao("Doce fino decorado"); p3.setPrecoUnitario(150.00); p3.setCategoria(Categoria.DOCES_FINOS);
-                Produto p4 = new Produto(); p4.setNome("Brigadeiro Tradicional"); p4.setDescricao("Chocolate nobre granulado"); p4.setPrecoUnitario(70.00); p4.setCategoria(Categoria.DOCES_SIMPLES);
                 
-                repository.save(p1); repository.save(p2); repository.save(p3); repository.save(p4);
+                List<Produto> produtos = List.of(
+                    // salgados fritos
+                    criarProduto("Coxinha de Frango", 1.80, Categoria.SALGADOS_FRITOS),
+                    criarProduto("Quibe", 1.80, Categoria.SALGADOS_FRITOS),
+                    criarProduto("Boliviano", 1.80, Categoria.SALGADOS_FRITOS),
+                    criarProduto("Risole", 1.80, Categoria.SALGADOS_FRITOS),
+                    criarProduto("Bolinho misto(queijo e presunto)", 1.80, Categoria.SALGADOS_FRITOS),
+                    criarProduto("Pastel frito", 1.80, Categoria.SALGADOS_FRITOS),
+                    criarProduto("Salgados Congelados(todos)", 1.80, Categoria.SALGADOS_FRITOS),
+                    
+                    // salgados assados
+                    criarProduto("Empada de Frango", 95.00, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Barquete", 1.80, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Saltenha", 1.80, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Empada", 1.80, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Pastel de Forno", 1.80, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Pãozinho recheado", 1.80, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Pãozinho sem recheio", 1.80, Categoria.SALGADOS_ASSADOS),
+                    
+                    // doces finos
+                    criarProduto("Ameixa", 2.00, Categoria.DOCES_FINOS),
+                    criarProduto("Limão", 2.00, Categoria.DOCES_FINOS),
+                    criarProduto("Maracujá", 2.00, Categoria.DOCES_FINOS),
+                    criarProduto("Amendoim", 2.00, Categoria.DOCES_FINOS),
+                    criarProduto("Nozes", 2.00, Categoria.DOCES_FINOS),
+                    criarProduto("Damasco", 2.00, Categoria.DOCES_FINOS),
+                    criarProduto("Prestígio", 2.00, Categoria.DOCES_FINOS),
+                    
+                    // doces simples 
+                    criarProduto("Brigadeiro", 1.80, Categoria.DOCES_SIMPLES),
+                    criarProduto("Casadinho", 1.80, Categoria.DOCES_SIMPLES),
+                    criarProduto("Beijinho", 1.80, Categoria.DOCES_SIMPLES),
+                    criarProduto("Pastel doce", 1.80, Categoria.DOCES_SIMPLES),
+                    criarProduto("Empadinha doce", 1.80, Categoria.DOCES_SIMPLES),
+                    criarProduto("Brigadeiro de leite ninho", 1.80, Categoria.DOCES_SIMPLES)
+                );
+
+                repository.saveAll(produtos);
             }
         };
+    }
+
+    // Método auxiliar para não repetir os "setters" 27 vezes
+    private Produto criarProduto(String nome, double preco, Categoria categoria) {
+        Produto p = new Produto();
+        p.setNome(nome);
+        p.setPrecoUnitario(preco);
+        p.setCategoria(categoria);
+        return p;
     }
 }

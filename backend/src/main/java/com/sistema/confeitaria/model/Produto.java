@@ -12,9 +12,6 @@ public class Produto {
     private Long id;
     private String nome;
 
-    @Column(name = "descricao")
-    private String descricao;
-
     private Double precoUnitario;
 
     @Enumerated(EnumType.STRING)

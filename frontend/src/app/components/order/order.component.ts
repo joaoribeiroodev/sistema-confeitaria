@@ -4,6 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
 import { ApiService } from '../../services/api.service';
 
+export enum SaborOpcao {
+  FRANGO = 'Frango',
+  CARNE = 'Carne'
+}
+
 @Component({
   selector: 'app-order',
   templateUrl: './order.component.html',
@@ -16,11 +21,42 @@ export class OrderComponent implements OnInit {
   agendaLotada: boolean = false;
   buscandoCep: boolean = false;
 
-  produtos = [
-    { id: 1, nome: 'Coxinha de Frango', descricao: 'Cento do salgado frito na hora', preco: 80.00, categoria: 'SALGADOS_FRITOS' },
-    { id: 2, nome: 'Empada de Frango', descricao: 'Salgado assado super recheado', preco: 95.00, categoria: 'SALGADOS_ASSADOS' },
-    { id: 3, nome: 'Camafeu de Nozes', descricao: 'Doce fino banhado em fondant', preco: 150.00, categoria: 'DOCES_FINOS' },
-    { id: 4, nome: 'Brigadeiro Tradicional', descricao: 'Chocolate nobre granulado', preco: 70.00, categoria: 'DOCES_SIMPLES' }
+  // Sincronizado: preco alterado para precoUnitario e saborSelecionado pré-definido como padrão
+  produtos: any[] = [
+    // salgados fritos
+    { id: 1, nome: 'Coxinha de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
+    { id: 2, nome: 'Quibe', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
+    { id: 3, nome: 'Boliviano', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 4, nome: 'Risole', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
+    { id: 5, nome: 'Bolinho misto (queijo e presunto)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
+    { id: 6, nome: 'Pastel frito', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 7, nome: 'Salgados Congelados (todos)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
+
+    // salgados assados
+    { id: 8, nome: 'Empada de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 9, nome: 'Barquete', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 10, nome: 'Saltenha', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 11, nome: 'Empada', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 12, nome: 'Pastel de Forno', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 13, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 14, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+
+    // doces finos
+    { id: 15, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 16, nome: 'Limão', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 17, nome: 'Maracujá', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 18, nome: 'Amendoim', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 19, nome: 'Nozes', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 20, nome: 'Damasco', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 21, nome: 'Prestígio', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+
+    // doces simples
+    { id: 22, nome: 'Brigadeiro', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 23, nome: 'Casadinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 24, nome: 'Beijinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 25, nome: 'Pastel doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 26, nome: 'Empadinha doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 27, nome: 'Brigadeiro de leite ninho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' }
   ];
 
   constructor(
@@ -28,7 +64,7 @@ export class OrderComponent implements OnInit {
     public cartService: CartService,
     private apiService: ApiService,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit() {
     const savedClient = JSON.parse(localStorage.getItem('cliente_dados') || '{}');
@@ -39,7 +75,6 @@ export class OrderComponent implements OnInit {
       cpf: [savedClient.cpf || '', [Validators.required, this.validarCPF]],
       data: ['', Validators.required],
       horario: ['', Validators.required],
-      // Novos campos de endereço detalhados
       cep: [savedClient.cep || '', [Validators.required, Validators.minLength(8)]],
       logradouro: [savedClient.logradouro || '', Validators.required],
       numero: [savedClient.numero || '', Validators.required],
@@ -62,7 +97,7 @@ export class OrderComponent implements OnInit {
   // INTEGRAÇÃO VIACEP
   // =========================================================================
   buscarCep() {
-    let cep = this.orderForm.get('cep')?.value?.replace(/\D/g, ''); // Remove tudo que não for número
+    let cep = this.orderForm.get('cep')?.value?.replace(/\D/g, '');
 
     if (cep && cep.length === 8) {
       this.buscandoCep = true;
@@ -111,7 +146,7 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  getQuantidade(id: number): number {
+  getQuantidade(id: number | string): number {
     try {
       const itens = this.cartService.getSnapshot() || [];
       const item = itens.find((i: any) => i.id === id);
@@ -121,8 +156,19 @@ export class OrderComponent implements OnInit {
     }
   }
 
+  // Corrigido: Lendo dinamicamente a propriedade reativa prod.saborSelecionado do HTML
   adicionarProduto(prod: any) {
-    const itemCarrinho = { id: prod.id, nome: prod.nome, precoUnitario: prod.preco, quantidade: 1 };
+    const sabor = prod.saborSelecionado;
+    const nomeFinal = sabor ? `${prod.nome} (${sabor})` : prod.nome;
+    const idUnico = sabor ? `${prod.id}-${sabor}` : prod.id;
+
+    const itemCarrinho = {
+      id: idUnico,
+      nome: nomeFinal,
+      precoUnitario: prod.precoUnitario,
+      quantidade: 1
+    };
+
     const s = this.cartService as any;
     if (typeof s.adicionarItem === 'function') s.adicionarItem(itemCarrinho);
     else if (typeof s.adicionar === 'function') s.adicionar(itemCarrinho);
@@ -130,7 +176,7 @@ export class OrderComponent implements OnInit {
     else if (typeof s.add === 'function') s.add(itemCarrinho);
   }
 
-  removerProduto(id: number) {
+  removerProduto(id: number | string) {
     const s = this.cartService as any;
     if (typeof s.removerItem === 'function') s.removerItem(id);
     else if (typeof s.remover === 'function') s.remover(id);
@@ -164,10 +210,15 @@ export class OrderComponent implements OnInit {
     const enderecoCompleto = `${dadosForm.logradouro}, ${dadosForm.numero}${complementoFormatado}, ${dadosForm.bairro}, ${dadosForm.cidade} - ${dadosForm.uf}, CEP: ${dadosForm.cep}`;
 
     let totalCalculado = 0;
+
     const itensPayload = itensCarrinho.map((item: any) => {
       totalCalculado += (item.precoUnitario * item.quantidade);
+
+      // Tratamento seguro para enviar IDs puros e válidos para o banco de dados
+      const idNumericoOriginal = typeof item.id === 'string' ? parseInt(item.id.split('-')[0], 10) : item.id;
+
       return {
-        produto: { id: item.id },
+        produto: { id: idNumericoOriginal },
         quantidade: item.quantidade,
         precoPraticado: item.precoUnitario
       };
@@ -187,7 +238,7 @@ export class OrderComponent implements OnInit {
     };
 
     const whatsappMessageParts: string[] = [];
-    whatsappMessageParts.push('*🧾 NOVO PEDIDO CONFIRMADO*');
+    whatsappMessageParts.push('*NOVO PEDIDO CONFIRMADO*');
     whatsappMessageParts.push('');
     whatsappMessageParts.push(`*Cliente:* ${dadosForm.nome}`);
     whatsappMessageParts.push(`*Endereço:* ${enderecoCompleto}`);
@@ -202,8 +253,9 @@ export class OrderComponent implements OnInit {
     whatsappMessageParts.push('');
     whatsappMessageParts.push(`*TOTAL:* R$ ${totalCalculado.toFixed(2)}`);
 
-    const numMae = '5571992661385';
+    const numMae = '5571987669537';
     const whatsappUrl = `https://wa.me/${numMae}?text=${encodeURIComponent(whatsappMessageParts.join('\n'))}`;
+
     const popup = window.open('', '_blank');
 
     this.apiService.enviarPedido(payload).subscribe({

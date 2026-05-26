@@ -15,7 +15,7 @@ export class AdminDashboardComponent implements OnInit {
   size = 10;
   totalPages = 1;
 
-  constructor(private adminService: AdminService, private router: Router) {}
+  constructor(private adminService: AdminService, private router: Router) { }
 
   ngOnInit() {
     this.carregarDados();
@@ -23,7 +23,7 @@ export class AdminDashboardComponent implements OnInit {
 
   carregarDados() {
     this.adminService.getMetricas().subscribe({
-      next: (dados: any) => this.metricas = dados, // CORRIGIDO: Adicionado ": any"
+      next: (dados: any) => this.metricas = dados,
       error: () => this.logout()
     });
 

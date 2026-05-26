@@ -16,6 +16,7 @@ frontend/node_modules/
 .env.*.local
 **/.env
 **/.env.*
+!**/.env.example
 **/secrets.properties
 **/credentials.json
 **/*.key
