@@ -20,5 +20,10 @@ export class ApiService {
   validarHorario(data: string, horario: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.baseUrl}/validar-horario?data=${data}&horario=${horario}`);
   }
+
+  verificarHorario(data: string, horario: string) {
+  // Passamos o horário com ":00" no final para o backend entender como LocalTime (HH:mm:ss)
+  return this.http.get<boolean>(`${this.baseUrl}/verificar-horario?data=${data}&horario=${horario}:00`);
+}
 }
 

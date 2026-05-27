@@ -1,11 +1,11 @@
 package com.sistema.confeitaria.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime; // <-- ADICIONE ESTA LINHA
 import com.sistema.confeitaria.model.Pedido;
 import com.sistema.confeitaria.service.PedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -51,5 +51,15 @@ public class PedidoController {
     } catch (Exception e) {
         return ResponseEntity.ok(true); // Evita travar o front caso a data venha incompleta na digitação
     }
-}
+    }
+
+    @GetMapping("/verificar-horario")
+    public ResponseEntity<Boolean> verificarHorario(
+        @RequestParam LocalDate data, 
+        @RequestParam LocalTime horario) {
+    
+    // Retorna true (disponível) ou false (ocupado)
+    boolean disponivel = pedidoService.verificarHorarioDisponivel(data, horario);
+    return ResponseEntity.ok(disponivel);
+    }
 }

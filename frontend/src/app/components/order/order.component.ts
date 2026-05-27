@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
@@ -14,6 +14,7 @@ export enum SaborOpcao {
   templateUrl: './order.component.html',
   standalone: false
 })
+
 export class OrderComponent implements OnInit {
   orderForm!: FormGroup;
   step: number = 1;
@@ -64,7 +65,8 @@ export class OrderComponent implements OnInit {
     private fb: FormBuilder,
     public cartService: CartService,
     private apiService: ApiService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef // Injetando o ChangeDetectorRef aqui
   ) { }
 
   ngOnInit(): void {
@@ -149,11 +151,36 @@ export class OrderComponent implements OnInit {
   };
 
   avancarParaMenu(): void {
-    if (this.orderForm.valid && !this.agendaLotada && !this.horarioOcupado) {
-      localStorage.setItem('cliente_dados', JSON.stringify(this.orderForm.value));
-      this.step = 2;
-    }
+  if (this.orderForm.valid && !this.agendaLotada) {
+    const data = this.orderForm.get('data')?.value;
+    const horario = this.orderForm.get('horario')?.value;
+
+    // Consulta o backend antes de ir para o passo 2
+    this.apiService.verificarHorario(data, horario).subscribe({
+      next: (disponivel: boolean) => {
+        if (disponivel) {
+          // Horário livre! Salva os dados e avança.
+          this.horarioOcupado = false;
+          localStorage.setItem('cliente_dados', JSON.stringify(this.orderForm.value));
+          this.step = 2;
+
+          // Força o Angular a atualizar a tela imediatamente!
+          this.cdr.detectChanges();
+        } else {
+          // Horário ocupado! Barra o avanço e avisa o usuário.
+          this.horarioOcupado = true;
+          alert('Este horário já foi reservado por outro cliente. Por favor, escolha outro horário.');
+        }
+      },
+      error: () => {
+        alert('Ocorreu um erro ao verificar o horário. Tente novamente.');
+      }
+    });
+  } else {
+    // Se o formulário for inválido, marca os campos em vermelho
+    this.orderForm.markAllAsTouched();
   }
+}
 
   getQuantidade(id: number | string): number {
     try {
@@ -277,26 +304,34 @@ export class OrderComponent implements OnInit {
         if (typeof this.cartService.clear === 'function') this.cartService.clear();
 
         this.step = 3;
+
+        // Força a atualização da tela imediatamente após mudar de step
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
-      if (popup) popup.close(); // Fecha o popup do whatsapp que falhou
+        if (popup) popup.close(); // Fecha o popup do whatsapp que falhou
 
-      // Captura a mensagem de erro vinda do backend (ex: "Este horário já foi reservado...")
-      // ou exibe uma genérica caso o servidor caia.
-      let mensagemErro = 'Ocorreu um erro inesperado ao salvar o seu pedido.';
+        // Captura a mensagem de erro vinda do backend ou exibe uma genérica
+        let mensagemErro = 'Ocorreu um erro inesperado ao salvar o seu pedido.';
 
-      if (err.error && typeof err.error === 'string') {
-        mensagemErro = err.error; // Pega o erro direto se for string
-      } else if (err.error && err.error.message) {
-        mensagemErro = err.error.message; // Pega do formato padrão do Spring Boot
+        if (err.error && typeof err.error === 'string') {
+          mensagemErro = err.error; // Pega o erro direto se for string
+        } else if (err.error && err.error.message) {
+          mensagemErro = err.error.message; // Pega do formato padrão do Spring Boot
+        }
+
+        // Limpa o texto para remover o status HTTP e aspas (Ex: 409 CONFLICT "Mensagem" -> Mensagem)
+        mensagemErro = mensagemErro
+          .replace(/^\d{3}\s[A-Z_]+\s/, '') // Remove códigos como "409 CONFLICT " ou "400 BAD_REQUEST "
+          .replace(/^"/, '')                // Remove aspas do começo do texto
+          .replace(/"$/, '');               // Remove aspas do final do texto
+
+        // Exibe o alerta amigável
+        alert('Atenção: ' + mensagemErro);
+
+        // Garante que a tela reflita as mudanças em caso de erro também
+        this.cdr.detectChanges();
       }
-
-      // Exibe o alerta amigável
-      alert('Atenção: ' + mensagemErro);
-
-      // Opcional: Se for erro de horário, você pode forçar o usuário a voltar pro step do formulário
-      // this.step = 1;
-    }
     });
   }
 

@@ -14,6 +14,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.Arrays;
 
 @Configuration
@@ -32,7 +33,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/auth/**", "/api/pedidos", "/api/pedidos/validar-data", "/error").permitAll()
+                        // Rota de verificar-horario
+                        .requestMatchers("/api/auth/**", "/api/pedidos", "/api/pedidos/validar-data", "/api/pedidos/verificar-horario", "/error").permitAll()
                         .requestMatchers("/api/admin/**", "/api/pedidos/admin/**").authenticated()
                         .anyRequest().denyAll()
                 )
