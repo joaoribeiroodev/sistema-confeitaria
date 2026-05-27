@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CartService } from '../../services/cart.service';
 import { ApiService } from '../../services/api.service';
@@ -20,10 +20,11 @@ export class OrderComponent implements OnInit {
   activeCategory: string = 'SALGADOS_FRITOS';
   agendaLotada: boolean = false;
   buscandoCep: boolean = false;
+  whatsappUrlFallback: string = '';
+  horarioOcupado: boolean = false;
 
-  // Sincronizado: preco alterado para precoUnitario e saborSelecionado pré-definido como padrão
   produtos: any[] = [
-    // salgados fritos
+    // Salgados fritos
     { id: 1, nome: 'Coxinha de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 2, nome: 'Quibe', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 3, nome: 'Boliviano', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
@@ -32,7 +33,7 @@ export class OrderComponent implements OnInit {
     { id: 6, nome: 'Pastel frito', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
     { id: 7, nome: 'Salgados Congelados (todos)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
 
-    // salgados assados
+    // Salgados assados
     { id: 8, nome: 'Empada de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 9, nome: 'Barquete', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 10, nome: 'Saltenha', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
@@ -41,7 +42,7 @@ export class OrderComponent implements OnInit {
     { id: 13, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 14, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
 
-    // doces finos
+    // Doces finos
     { id: 15, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 16, nome: 'Limão', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 17, nome: 'Maracujá', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
@@ -50,7 +51,7 @@ export class OrderComponent implements OnInit {
     { id: 20, nome: 'Damasco', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 21, nome: 'Prestígio', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
 
-    // doces simples
+    // Doces simples
     { id: 22, nome: 'Brigadeiro', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
     { id: 23, nome: 'Casadinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
     { id: 24, nome: 'Beijinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
@@ -66,7 +67,7 @@ export class OrderComponent implements OnInit {
     private http: HttpClient
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     const savedClient = JSON.parse(localStorage.getItem('cliente_dados') || '{}');
 
     this.orderForm = this.fb.group({
@@ -84,20 +85,23 @@ export class OrderComponent implements OnInit {
       uf: [savedClient.uf || '', Validators.required]
     });
 
-    this.orderForm.get('data')?.valueChanges.subscribe(data => {
+    this.orderForm.get('data')?.valueChanges.subscribe((data: any) => {
       if (data) {
-        this.apiService.validarData(data).subscribe(disponivel => {
-          this.agendaLotada = !disponivel;
+        this.apiService.validarData(data).subscribe({
+          next: (disponivel: any) => {
+            this.agendaLotada = !Boolean(disponivel);
+          },
+          error: () => {
+            this.agendaLotada = false;
+          }
         });
       }
     });
   }
 
-  // =========================================================================
-  // INTEGRAÇÃO VIACEP
-  // =========================================================================
-  buscarCep() {
-    let cep = this.orderForm.get('cep')?.value?.replace(/\D/g, '');
+  buscarCep(): void {
+    const cepValue = this.orderForm.get('cep')?.value;
+    const cep = cepValue ? cepValue.toString().replace(/\D/g, '') : '';
 
     if (cep && cep.length === 8) {
       this.buscandoCep = true;
@@ -123,24 +127,29 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  validarCPF(control: any) {
-    const cpf = control.value?.replace(/[^\d]+/g, '');
-    if (!cpf || cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return { cpfInvalido: true };
-    let soma = 0, resto;
-    for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf.substring(9, 10))) return { cpfInvalido: true };
-    soma = 0;
-    for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf.substring(10, 11))) return { cpfInvalido: true };
-    return null;
-  }
+  validarCPF = (control: AbstractControl): { [key: string]: boolean } | null => {
+    if (!control.value) return null;
 
-  avancarParaMenu() {
-    if (this.orderForm.valid && !this.agendaLotada) {
+    const cpf = control.value.toString().replace(/[^\d]+/g, '');
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return { cpfInvalido: true };
+
+    let soma = 0, resto;
+    for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i), 10) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.substring(9, 10), 10)) return { cpfInvalido: true };
+
+    soma = 0;
+    for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i), 10) * (12 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(cpf.substring(10, 11), 10)) return { cpfInvalido: true };
+
+    return null;
+  };
+
+  avancarParaMenu(): void {
+    if (this.orderForm.valid && !this.agendaLotada && !this.horarioOcupado) {
       localStorage.setItem('cliente_dados', JSON.stringify(this.orderForm.value));
       this.step = 2;
     }
@@ -156,8 +165,7 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  // Corrigido: Lendo dinamicamente a propriedade reativa prod.saborSelecionado do HTML
-  adicionarProduto(prod: any) {
+  adicionarProduto(prod: any): void {
     const sabor = prod.saborSelecionado;
     const nomeFinal = sabor ? `${prod.nome} (${sabor})` : prod.nome;
     const idUnico = sabor ? `${prod.id}-${sabor}` : prod.id;
@@ -176,7 +184,7 @@ export class OrderComponent implements OnInit {
     else if (typeof s.add === 'function') s.add(itemCarrinho);
   }
 
-  removerProduto(id: number | string) {
+  removerProduto(id: number | string): void {
     const s = this.cartService as any;
     if (typeof s.removerItem === 'function') s.removerItem(id);
     else if (typeof s.remover === 'function') s.remover(id);
@@ -202,7 +210,7 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  finalizarPedido() {
+  finalizarPedido(): void {
     const dadosForm = this.orderForm.value;
     const itensCarrinho = this.cartService.getSnapshot() || [];
 
@@ -213,8 +221,6 @@ export class OrderComponent implements OnInit {
 
     const itensPayload = itensCarrinho.map((item: any) => {
       totalCalculado += (item.precoUnitario * item.quantidade);
-
-      // Tratamento seguro para enviar IDs puros e válidos para o banco de dados
       const idNumericoOriginal = typeof item.id === 'string' ? parseInt(item.id.split('-')[0], 10) : item.id;
 
       return {
@@ -260,6 +266,8 @@ export class OrderComponent implements OnInit {
 
     this.apiService.enviarPedido(payload).subscribe({
       next: () => {
+        this.whatsappUrlFallback = whatsappUrl;
+
         if (popup) {
           popup.location.href = whatsappUrl;
         } else {
@@ -267,13 +275,34 @@ export class OrderComponent implements OnInit {
         }
 
         if (typeof this.cartService.clear === 'function') this.cartService.clear();
-        this.step = 1;
-        this.orderForm.reset();
+
+        this.step = 3;
       },
       error: (err: any) => {
-        if (popup) popup.close();
-        alert(err.error || 'Ocorreu um erro ao salvar o seu pedido.');
+      if (popup) popup.close(); // Fecha o popup do whatsapp que falhou
+
+      // Captura a mensagem de erro vinda do backend (ex: "Este horário já foi reservado...")
+      // ou exibe uma genérica caso o servidor caia.
+      let mensagemErro = 'Ocorreu um erro inesperado ao salvar o seu pedido.';
+
+      if (err.error && typeof err.error === 'string') {
+        mensagemErro = err.error; // Pega o erro direto se for string
+      } else if (err.error && err.error.message) {
+        mensagemErro = err.error.message; // Pega do formato padrão do Spring Boot
       }
+
+      // Exibe o alerta amigável
+      alert('Atenção: ' + mensagemErro);
+
+      // Opcional: Se for erro de horário, você pode forçar o usuário a voltar pro step do formulário
+      // this.step = 1;
+    }
     });
+  }
+
+  voltarAoInicio(): void {
+    this.orderForm.reset();
+    this.whatsappUrlFallback = '';
+    this.step = 1;
   }
 }

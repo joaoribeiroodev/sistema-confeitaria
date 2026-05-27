@@ -38,4 +38,18 @@ public class PedidoController {
     public ResponseEntity<List<Pedido>> listarParaAdmin() {
         return ResponseEntity.ok(pedidoService.listarTodos());
     }
+
+    @GetMapping("/validar-horario")
+    public ResponseEntity<Boolean> validarHorario(@RequestParam String data, @RequestParam String horario) {
+    try {
+        LocalDate localDate = LocalDate.parse(data);
+        // O Angular envia "HH:mm", adicionamos ":00" se necessário para o LocalTime ler corretamente
+        java.time.LocalTime localTime = java.time.LocalTime.parse(horario.length() == 5 ? horario + ":00" : horario);
+        
+        boolean disponivel = pedidoService.verificarHorarioDisponivel(localDate, localTime);
+        return ResponseEntity.ok(disponivel);
+    } catch (Exception e) {
+        return ResponseEntity.ok(true); // Evita travar o front caso a data venha incompleta na digitação
+    }
+}
 }

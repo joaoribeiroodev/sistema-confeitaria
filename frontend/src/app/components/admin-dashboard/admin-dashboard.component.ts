@@ -31,13 +31,16 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   carregarHistorico() {
-    this.adminService.getHistorico(this.page, this.size).subscribe({
-      next: (res: any) => {
-        this.pedidos = res.content;
-        this.totalPages = res.totalPages;
-      }
-    });
-  }
+  this.adminService.getHistorico(this.page, this.size).subscribe({
+    next: (res: any) => {
+      this.pedidos = res.content;
+      this.totalPages = res.totalPages;
+    },
+    error: (err: any) => {
+      console.error('Erro ao carregar o histórico de pedidos:', err);
+    }
+  });
+}
 
   mudarPagina(novaPagina: number) {
     this.page = novaPagina;

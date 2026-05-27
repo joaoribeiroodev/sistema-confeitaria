@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
+import java.time.LocalTime; // <-- ADICIONE ESTA LINHA
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,4 +33,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             "WHERE p.data_encomenda BETWEEN :inicio AND :fim " +
             "GROUP BY pr.nome ORDER BY quantidade DESC LIMIT 5", nativeQuery = true)
     List<Object[]> buscarProdutosMaisVendidos(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
+
+    boolean existsByDataEncomendaAndHorarioEncomenda(LocalDate dataEncomenda, LocalTime horarioEncomenda);
+
 }

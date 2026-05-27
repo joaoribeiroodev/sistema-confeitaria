@@ -1,5 +1,6 @@
 package com.sistema.confeitaria.controller;
 
+import com.sistema.confeitaria.dto.PedidoResumoDTO;
 import com.sistema.confeitaria.dto.DashboardMetricsDTO;
 import com.sistema.confeitaria.model.Pedido;
 import com.sistema.confeitaria.service.DashboardService;
@@ -28,10 +29,17 @@ public class AdminController {
         return ResponseEntity.ok(dashboardService.calcularMetricasMensais());
     }
 
-    // Melhoria: Tipagem explícita no lugar do curinga <?>
+    // endpoint para listar pedidos sem causar StackOverflowError  
     @GetMapping("/historico")
-    public ResponseEntity<Page<Pedido>> getHistorico(Pageable pageable) {
-        return ResponseEntity.ok(dashboardService.listarPedidosPaginados(pageable));
+    public ResponseEntity<Page<PedidoResumoDTO>> getHistorico(Pageable pageable) {
+        // Busca a página de entidades originais no banco
+        Page<Pedido> paginaDePedidos = dashboardService.listarPedidosPaginados(pageable);
+        
+        // Converte cada Pedido para um PedidoResumoDTO
+        Page<PedidoResumoDTO> paginaDeDTOs = paginaDePedidos.map(pedido -> new PedidoResumoDTO(pedido));
+        
+        // Retorna a página já convertida
+        return ResponseEntity.ok(paginaDeDTOs);
     }
 
     @GetMapping("/exportar-csv")

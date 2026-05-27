@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 export class ApiService {
   private baseUrl = `${environment.apiUrl}/pedidos`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   enviarPedido(pedido: any): Observable<any> {
     return this.http.post(this.baseUrl, pedido);
@@ -15,6 +15,10 @@ export class ApiService {
 
   validarData(data: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.baseUrl}/validar-data?data=${data}`);
+  }
+
+  validarHorario(data: string, horario: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.baseUrl}/validar-horario?data=${data}&horario=${horario}`);
   }
 }
 

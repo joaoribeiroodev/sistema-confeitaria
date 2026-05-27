@@ -7,9 +7,9 @@ networks:
 services:
   db:
     image: mysql:8.0
-    container_name: confeitaria-db
+    container_name: confeitaria_db
     restart: unless-stopped
-    # 📑 CORREÇÃO CRÍTICA: Adicionado --default-time-zone="-03:00" para forçar o MySQL no horário de Brasília
+    # default-time-zone="-03:00" para forçar o MySQL no horário de Brasília
     command: --innodb-buffer-pool-size=128M --max-connections=50 --default-time-zone="-03:00"
     environment:
       MYSQL_DATABASE: confeitaria_db
