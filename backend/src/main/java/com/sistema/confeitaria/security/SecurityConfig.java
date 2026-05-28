@@ -33,11 +33,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
-                        // Rota de verificar-horario
-                        .requestMatchers("/api/auth/**", "/api/pedidos", "/api/pedidos/validar-data", "/api/pedidos/verificar-horario", "/error").permitAll()
-                        .requestMatchers("/api/admin/**", "/api/pedidos/admin/**").authenticated()
-                        .anyRequest().denyAll()
-                )
+                    .requestMatchers("/api/auth/**", "/api/pedidos", "/api/pedidos/validar-data", "/api/pedidos/verificar-horario", "/error").permitAll()
+                    // Adicionámos o "/api/pedidos/**" aqui nas rotas autenticadas
+                    .requestMatchers("/api/admin/**", "/api/pedidos/admin/**", "/api/pedidos/**").authenticated() 
+                .anyRequest().denyAll()
+)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

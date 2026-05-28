@@ -3,7 +3,7 @@ package com.sistema.confeitaria.controller;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.sistema.confeitaria.model.Pedido;
-import com.sistema.confeitaria.dto.PedidoDashboardDTO; // 🌟 Import do novo DTO unificado
+import com.sistema.confeitaria.dto.PedidoDashboardDTO;
 import com.sistema.confeitaria.service.PedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.verificarDisponibilidade(localDate));
     }
 
-    // 🌟 ATUALIZADO: Retorna List<PedidoDashboardDTO> em vez de List<Pedido>
+    // Retorna List<PedidoDashboardDTO> em vez de List<Pedido>
     @GetMapping("/admin/listar")
     public ResponseEntity<List<PedidoDashboardDTO>> listarParaAdmin() {
         return ResponseEntity.ok(pedidoService.listarTodos());
