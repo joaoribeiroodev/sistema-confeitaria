@@ -12,7 +12,7 @@ export class AdminDashboardComponent implements OnInit {
   activeTab: 'principal' | 'acompanhamento' = 'principal';
 
   metricas: any = null;
-  pedidos: any[] = []; 
+  pedidos: any[] = [];
   page = 0;
   size = 10;
   totalPages = 1;
@@ -22,14 +22,26 @@ export class AdminDashboardComponent implements OnInit {
   filtroStatusAtual: string = 'PENDENTE';
   qtdPendentesCard: number = 0;
 
+  // 🌟 NOVO CAMPO: Armazena o mês e ano do filtro (Inicia automaticamente no mês atual ex: "2026-05")
+  mesFiltro: string = '';
+
   constructor(
-    private adminService: AdminService, 
+    private adminService: AdminService,
     private router: Router,
-    private cdr: ChangeDetectorRef 
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
+    this.inicializarFiltroMes();
     this.carregarDados();
+  }
+
+  // Define o valor inicial do input baseado no mês vigente do sistema
+  private inicializarFiltroMes() {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    this.mesFiltro = `${ano}-${mes}`;
   }
 
   mudarAbaPrincipal(aba: 'principal' | 'acompanhamento') {
@@ -111,17 +123,31 @@ export class AdminDashboardComponent implements OnInit {
     this.carregarHistorico();
   }
 
-  exportarCSV() {
-    this.adminService.exportarCsv().subscribe({
+  // 🌟 REFORMULADO: Divide a string do input "YYYY-MM", converte e baixa o .xlsx
+  exportarPlanilhaExcel() {
+    if (!this.mesFiltro) {
+      alert('Por favor, selecione um mês válido!');
+      return;
+    }
+
+    const [anoStr, mesStr] = this.mesFiltro.split('-');
+    const ano = parseInt(anoStr, 10);
+    const mes = parseInt(mesStr, 10);
+
+    this.adminService.exportarExcel(ano, mes).subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `relatorio-vendas-${new Date().getMonth() + 1}.csv`;
+        // Nome padronizado igual ao do back-end para manter integridade
+        a.download = `relatorio-pedidos-${mesStr}-${anoStr}.xlsx`;
         a.click();
         window.URL.revokeObjectURL(url);
       },
-      error: () => alert('Erro ao exportar CSV.')
+      error: (err: any) => {
+        console.error('Erro no download:', err);
+        alert('Erro ao exportar planilha Excel dos pedidos.');
+      }
     });
   }
 

@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class AdminService {
   private apiUrl = `${environment.apiUrl}/admin`;
   private authUrl = `${environment.apiUrl}/auth`;
-  private pedidosUrl = `${environment.apiUrl}/pedidos`; 
+  private pedidosUrl = `${environment.apiUrl}/pedidos`;
 
   constructor(private http: HttpClient) {}
 
@@ -25,8 +25,9 @@ export class AdminService {
     return this.http.get(`${this.apiUrl}/historico?page=${page}&size=${size}&sort=id,desc`);
   }
 
-  exportarCsv(): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/exportar-csv`, { responseType: 'blob' });
+  // Agora faz o GET para a rota XLSX passando ano e mês como parâmetros
+  exportarExcel(ano: number, mes: number): Observable<Blob> {
+    return this.http.get(`${this.pedidosUrl}/admin/exportar-excel?ano=${ano}&mes=${mes}`, { responseType: 'blob' });
   }
 
   getTodosPedidosParaAcompanhamento(): Observable<any[]> {

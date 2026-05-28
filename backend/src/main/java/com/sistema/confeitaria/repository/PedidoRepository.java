@@ -17,6 +17,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     // 1. Método automático do Spring para buscar pedidos entre duas datas
     List<Pedido> findByDataEncomendaBetween(LocalDate inicio, LocalDate fim);
 
+    // 🌟 NOVO: Busca e ordena todos os pedidos do intervalo para compor as linhas do Excel
+    List<Pedido> findByDataEncomendaBetweenOrderByDataEncomendaAscHorarioEncomendaAsc(LocalDate inicio, LocalDate fim);
+
     // 2. Adicionado "AND p.status <> 'CANCELADO'" para ignorar pedidos cancelados no faturamento
     @Query("SELECT COALESCE(SUM(p.valorTotal), 0) FROM Pedido p WHERE p.dataEncomenda BETWEEN :inicio AND :fim AND p.status <> 'CANCELADO'")
     BigDecimal calcularFaturamentoPeriodo(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
@@ -31,7 +34,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
             "JOIN produtos pr ON ip.produto_id = pr.id " +
             "JOIN pedidos p ON ip.pedido_id = p.id " +
             "WHERE p.data_encomenda BETWEEN :inicio AND :fim " +
-            "AND p.status <> 'CANCELADO' " + // <-- Filtro (formato String do banco)
+            "AND p.status <> 'CANCELADO' " + 
             "GROUP BY pr.nome ORDER BY quantidade DESC LIMIT 5", nativeQuery = true)
     List<Object[]> buscarProdutosMaisVendidos(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 

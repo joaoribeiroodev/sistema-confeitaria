@@ -5,6 +5,8 @@ import java.time.LocalTime;
 import com.sistema.confeitaria.model.Pedido;
 import com.sistema.confeitaria.dto.PedidoDashboardDTO;
 import com.sistema.confeitaria.service.PedidoService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -35,10 +37,27 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.verificarDisponibilidade(localDate));
     }
 
-    // Retorna List<PedidoDashboardDTO> em vez de List<Pedido>
     @GetMapping("/admin/listar")
     public ResponseEntity<List<PedidoDashboardDTO>> listarParaAdmin() {
         return ResponseEntity.ok(pedidoService.listarTodos());
+    }
+
+    // 🌟 NOVO ENDPOINT: Gerencia e dispara o fluxo de download do arquivo Excel estruturado
+    @GetMapping("/admin/exportar-excel")
+    public ResponseEntity<byte[]> exportarExcelMensal(@RequestParam int ano, @RequestParam int mes) {
+        try {
+            byte[] relatorioBytes = pedidoService.gerarRelatorioExcelMensal(ano, mes);
+            
+            // Define o nome de saída dinâmico com zeros à esquerda no mês para manter o padrão (ex: 05)
+            String nomeArquivo = String.format("relatorio-pedidos-%02d-%d.xlsx", mes, ano);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(relatorioBytes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/validar-horario")
@@ -63,7 +82,6 @@ public class PedidoController {
         return ResponseEntity.ok(disponivel);
     }
 
-    // O retorno agora entrega o DTO mapeado com segurança
     @PutMapping("/{id}/status")
     public ResponseEntity<?> atualizarStatus(@PathVariable Long id, @RequestParam String status) {
         try {
