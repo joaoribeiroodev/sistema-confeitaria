@@ -1,7 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // 👈 PRECISA TER ESSA LINHA
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,8 +23,13 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,          // 👈 PRECISA DECLARAR AQUI
-    ReactiveFormsModule   // 👈 PRECISA DECLARAR AQUI
+    FormsModule,
+    ReactiveFormsModule,
+    
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(), 
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
