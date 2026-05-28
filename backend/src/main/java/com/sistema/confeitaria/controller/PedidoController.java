@@ -1,8 +1,9 @@
 package com.sistema.confeitaria.controller;
 
 import java.time.LocalDate;
-import java.time.LocalTime; // <-- ADICIONE ESTA LINHA
+import java.time.LocalTime;
 import com.sistema.confeitaria.model.Pedido;
+import com.sistema.confeitaria.dto.PedidoDashboardDTO; // 🌟 Import do novo DTO unificado
 import com.sistema.confeitaria.service.PedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,23 +35,23 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.verificarDisponibilidade(localDate));
     }
 
+    // 🌟 ATUALIZADO: Retorna List<PedidoDashboardDTO> em vez de List<Pedido>
     @GetMapping("/admin/listar")
-    public ResponseEntity<List<Pedido>> listarParaAdmin() {
+    public ResponseEntity<List<PedidoDashboardDTO>> listarParaAdmin() {
         return ResponseEntity.ok(pedidoService.listarTodos());
     }
 
     @GetMapping("/validar-horario")
     public ResponseEntity<Boolean> validarHorario(@RequestParam String data, @RequestParam String horario) {
-    try {
-        LocalDate localDate = LocalDate.parse(data);
-        // O Angular envia "HH:mm", adicionamos ":00" se necessário para o LocalTime ler corretamente
-        java.time.LocalTime localTime = java.time.LocalTime.parse(horario.length() == 5 ? horario + ":00" : horario);
-        
-        boolean disponivel = pedidoService.verificarHorarioDisponivel(localDate, localTime);
-        return ResponseEntity.ok(disponivel);
-    } catch (Exception e) {
-        return ResponseEntity.ok(true); // Evita travar o front caso a data venha incompleta na digitação
-    }
+        try {
+            LocalDate localDate = LocalDate.parse(data);
+            java.time.LocalTime localTime = java.time.LocalTime.parse(horario.length() == 5 ? horario + ":00" : horario);
+            
+            boolean disponivel = pedidoService.verificarHorarioDisponivel(localDate, localTime);
+            return ResponseEntity.ok(disponivel);
+        } catch (Exception e) {
+            return ResponseEntity.ok(true);
+        }
     }
 
     @GetMapping("/verificar-horario")
@@ -58,8 +59,17 @@ public class PedidoController {
         @RequestParam LocalDate data, 
         @RequestParam LocalTime horario) {
     
-    // Retorna true (disponível) ou false (ocupado)
-    boolean disponivel = pedidoService.verificarHorarioDisponivel(data, horario);
-    return ResponseEntity.ok(disponivel);
+        boolean disponivel = pedidoService.verificarHorarioDisponivel(data, horario);
+        return ResponseEntity.ok(disponivel);
+    }
+
+    // O retorno agora entrega o DTO mapeado com segurança
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> atualizarStatus(@PathVariable Long id, @RequestParam String status) {
+        try {
+            return ResponseEntity.ok(pedidoService.atualizarStatus(id, status));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

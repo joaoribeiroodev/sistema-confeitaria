@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 export class AdminService {
   private apiUrl = `${environment.apiUrl}/admin`;
   private authUrl = `${environment.apiUrl}/auth`;
+  private pedidosUrl = `${environment.apiUrl}/pedidos`; 
 
   constructor(private http: HttpClient) {}
 
@@ -27,5 +28,12 @@ export class AdminService {
   exportarCsv(): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/exportar-csv`, { responseType: 'blob' });
   }
-}
 
+  getTodosPedidosParaAcompanhamento(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.pedidosUrl}/admin/listar`);
+  }
+
+  atualizarStatusPedido(id: number, status: string): Observable<any> {
+    return this.http.put(`${this.pedidosUrl}/${id}/status?status=${status}`, {});
+  }
+}
