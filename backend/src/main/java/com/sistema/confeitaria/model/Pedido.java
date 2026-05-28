@@ -11,6 +11,7 @@ import java.util.List;
 @Table(name = "pedidos")
 @Data
 public class Pedido {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,9 +25,8 @@ public class Pedido {
     private Double valorTotal;
     private String status = "PENDENTE";
 
-    // O @JsonIgnore impede que o Spring tente ler os itens vazios e cause o erro 500 no histórico
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pedido_id")
+    // Deixamos apenas UMA anotação @OneToMany com o mapeamento correto
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens;
+
 }

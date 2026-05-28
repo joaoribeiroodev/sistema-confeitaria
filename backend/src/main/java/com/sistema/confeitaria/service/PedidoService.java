@@ -1,6 +1,7 @@
 package com.sistema.confeitaria.service;
 
 import com.sistema.confeitaria.model.Pedido;
+import com.sistema.confeitaria.model.ItemPedido;
 import com.sistema.confeitaria.dto.PedidoResumoDTO;
 import com.sistema.confeitaria.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,19 +37,27 @@ public class PedidoService {
     }
 
     public Pedido salvar(Pedido pedido) {
-        // 1. Verifica se a agenda do dia já está lotada
-        if (!verificarDisponibilidade(pedido.getDataEncomenda())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Agenda lotada para este dia!");
-        }
-
-        // 2. NOVO: Verifica se o horário exato já foi reservado
-        if (!verificarHorarioDisponivel(pedido.getDataEncomenda(), pedido.getHorarioEncomenda())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já foi reservado por outro cliente. Por favor, escolha outro horário.");
-        }
-
-        // Se passar pelas duas validações, salva o pedido!
-        return pedidoRepository.save(pedido);
+    // 1. Verifica se a agenda do dia já está lotada
+    if (!verificarDisponibilidade(pedido.getDataEncomenda())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Agenda lotada para este dia!");
     }
+
+    // 2. Verifica se o horário exato já foi reservado
+    if (!verificarHorarioDisponivel(pedido.getDataEncomenda(), pedido.getHorarioEncomenda())) {
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já foi reservado por outro cliente. Por favor, escolha outro horário.");
+    }
+
+    // Vincula o Pedido a cada ItemPedido da lista para que o Cascade funcione no banco
+    if (pedido.getItens() != null) {
+        for (ItemPedido item : pedido.getItens()) {
+            item.setPedido(pedido); // Diz ao item quem é o pai dele
+        }
+    }
+    // =====================
+
+    // Se passar pelas validações e amarrações, salva o pedido E os itens em cascata!
+    return pedidoRepository.save(pedido);
+}
 
     public List<Pedido> listarTodos() {
         return pedidoRepository.findAll();

@@ -1,5 +1,6 @@
 package com.sistema.confeitaria.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +22,11 @@ public class ItemPedido {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "produto_id")
     private Produto produto;
+    
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
 
     private Integer quantidade;
     private Double precoPraticado;
