@@ -37,4 +37,5 @@ public class ItemPedido {
 
     private Integer quantidade;
     private Double precoPraticado;
+    private String sabor;
 }

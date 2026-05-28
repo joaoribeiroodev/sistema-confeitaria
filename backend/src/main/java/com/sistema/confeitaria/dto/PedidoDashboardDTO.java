@@ -15,23 +15,29 @@ import java.util.List;
 public class PedidoDashboardDTO {
     
     private Long id;
-    private String clienteNome;
-    private String clienteTelefone;
-    private String clienteEndereco;
     private LocalDate dataEncomenda;
     private LocalTime horarioEncomenda;
     private Double valorTotal;
     private String status;
-    private List<ItemPedidoDTO> itens; // Lista baseada na classe interna abaixo
+    private ClienteDTO cliente;      
+    private List<ItemPedidoDTO> itens; 
 
-    // CLASSE INTERNA UNIFICADA (Evita criar múltiplos ficheiros)
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+    public static class ClienteDTO {
+        private String nome;
+        private String telefone;
+        private String endereco;
+    }
+
+    @Getter @Setter @NoArgsConstructor @AllArgsConstructor
     public static class ItemPedidoDTO {
-        private String produtoNome;
+        private ProdutoDTO produto; 
         private Integer quantidade;
         private Double precoPraticado;
+    }
+
+    @Getter @Setter @NoArgsConstructor @AllArgsConstructor
+    public static class ProdutoDTO {
+        private String nome;
     }
 }

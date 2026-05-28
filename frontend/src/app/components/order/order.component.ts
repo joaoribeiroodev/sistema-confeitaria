@@ -14,7 +14,6 @@ export enum SaborOpcao {
   templateUrl: './order.component.html',
   standalone: false
 })
-
 export class OrderComponent implements OnInit {
   orderForm!: FormGroup;
   step: number = 1;
@@ -72,7 +71,6 @@ export class OrderComponent implements OnInit {
   ngOnInit(): void {
     const savedClient = JSON.parse(localStorage.getItem('cliente_dados') || '{}');
 
-    // Todos os campos com Validators.required habilitados e integrados
     this.orderForm = this.fb.group({
       nome: [savedClient.nome || '', Validators.required],
       telefone: [savedClient.telefone || '', [Validators.required, this.validarTelefone]],
@@ -81,7 +79,7 @@ export class OrderComponent implements OnInit {
       cep: [savedClient.cep || '', [Validators.required, Validators.minLength(8)]],
       logradouro: [savedClient.logradouro || '', Validators.required],
       numero: [savedClient.numero || '', Validators.required],
-      complemento: [savedClient.complemento || '', Validators.required], // Tornou-se obrigatório conforme solicitado
+      complemento: [savedClient.complemento || '', Validators.required],
       bairro: [savedClient.bairro || '', Validators.required],
       cidade: [savedClient.cidade || '', Validators.required],
       uf: [savedClient.uf || '', Validators.required]
@@ -101,19 +99,12 @@ export class OrderComponent implements OnInit {
     });
   }
 
-  // Validador Customizado para checar se o número de telefone/WhatsApp é real no Brasil
   validarTelefone = (control: AbstractControl): { [key: string]: boolean } | null => {
     if (!control.value) return null;
-
-    // Remove parênteses, traços e espaços, deixando só números
     const numeroLimpo = control.value.toString().replace(/[^\d]+/g, '');
-
-    // Um número de celular/WhatsApp válido no Brasil tem que ter exatamente 11 dígitos (DDD + 9 + 8 dígitos)
-    // E não pode ser uma sequência de números iguais (ex: 11111111111)
     if (numeroLimpo.length !== 11 || /^(\d)\1{10}$/.test(numeroLimpo)) {
       return { telefoneInvalido: true };
     }
-
     return null;
   };
 
@@ -167,46 +158,40 @@ export class OrderComponent implements OnInit {
         }
       });
     } else {
-      // Se o usuário clicar em enviar com campos vazios, marca e destaca todos em vermelho na tela
       this.orderForm.markAllAsTouched();
     }
   }
 
-  getQuantidade(id: number | string): number {
+  // 🌟 MODIFICADO: Agora consulta a quantidade usando o ID puro e o Sabor selecionado na tela
+  getQuantidade(prod: any): number {
     try {
-      const itens = this.cartService.getSnapshot() || [];
-      const item = itens.find((i: any) => i.id === id);
-      return item ? item.quantidade : 0;
+      const sabor = prod.saborSelecionado || null;
+      return this.cartService.getItemQuantity(prod.id, sabor);
     } catch (e) {
       return 0;
     }
   }
 
+  // 🌟 MODIFICADO: Adiciona o item ao carrinho repassando o ID como número e guardando o sabor isolado
   adicionarProduto(prod: any): void {
-    const sabor = prod.saborSelecionado;
+    const sabor = prod.saborSelecionado || null;
     const nomeFinal = sabor ? `${prod.nome} (${sabor})` : prod.nome;
-    const idUnico = sabor ? `${prod.id}-${sabor}` : prod.id;
 
     const itemCarrinho = {
-      id: idUnico,
+      id: prod.id, // Número puro
       nome: nomeFinal,
       precoUnitario: prod.precoUnitario,
-      quantidade: 1
+      quantidade: 1,
+      sabor: sabor
     };
 
-    const s = this.cartService as any;
-    if (typeof s.adicionarItem === 'function') s.adicionarItem(itemCarrinho);
-    else if (typeof s.adicionar === 'function') s.adicionar(itemCarrinho);
-    else if (typeof s.addItem === 'function') s.addItem(itemCarrinho);
-    else if (typeof s.add === 'function') s.add(itemCarrinho);
+    this.cartService.adicionarItem(itemCarrinho);
   }
 
-  removerProduto(id: number | string): void {
-    const s = this.cartService as any;
-    if (typeof s.removerItem === 'function') s.removerItem(id);
-    else if (typeof s.remover === 'function') s.remover(id);
-    else if (typeof s.removeItem === 'function') s.removeItem(id);
-    else if (typeof s.remove === 'function') s.remove(id);
+  // 🌟 MODIFICADO: Remove o item informando o ID puro e o sabor selecionado
+  removerProduto(prod: any): void {
+    const sabor = prod.saborSelecionado || null;
+    this.cartService.removerItem(prod.id, sabor);
   }
 
   get totalItens(): number {
@@ -236,14 +221,15 @@ export class OrderComponent implements OnInit {
 
     let totalCalculado = 0;
 
+    // 🌟 MODIFICADO: Mapeamento limpo enviando o ID numérico nativo para o back-end Java
     const itensPayload = itensCarrinho.map((item: any) => {
       totalCalculado += (item.precoUnitario * item.quantidade);
-      const idNumericoOriginal = typeof item.id === 'string' ? parseInt(item.id.split('-')[0], 10) : item.id;
-
+      
       return {
-        produto: { id: idNumericoOriginal },
+        produto: { id: item.id }, // ID numérico puro!
         quantidade: item.quantidade,
-        precoPraticado: item.precoUnitario
+        precoPraticado: item.precoUnitario,
+        sabor: item.sabor || null // Repassa string ou nulo sem misturar com o ID
       };
     });
 
@@ -290,8 +276,7 @@ export class OrderComponent implements OnInit {
           window.open(whatsappUrl, '_blank');
         }
 
-        if (typeof this.cartService.clear === 'function') this.cartService.clear();
-
+        this.cartService.clear();
         this.step = 3;
         this.cdr.detectChanges();
       },
