@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./admin-dashboard.component.css'],
   standalone: false
 })
+
 export class AdminDashboardComponent implements OnInit {
   metricas: any = null;
   pedidos: any[] = [];
@@ -15,7 +16,7 @@ export class AdminDashboardComponent implements OnInit {
   size = 10;
   totalPages = 1;
 
-  // INJETADO O cdr NO CONSTRUTOR
+  // injetando o cdr no constructor
   constructor(
     private adminService: AdminService, 
     private router: Router,
