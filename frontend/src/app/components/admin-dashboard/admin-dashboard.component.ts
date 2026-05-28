@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <-- ADICIONADO O ChangeDetectorRef
 import { AdminService } from '../../services/admin.service';
 import { Router } from '@angular/router';
 
@@ -15,7 +15,12 @@ export class AdminDashboardComponent implements OnInit {
   size = 10;
   totalPages = 1;
 
-  constructor(private adminService: AdminService, private router: Router) { }
+  // INJETADO O cdr NO CONSTRUTOR
+  constructor(
+    private adminService: AdminService, 
+    private router: Router,
+    private cdr: ChangeDetectorRef 
+  ) { }
 
   ngOnInit() {
     this.carregarDados();
@@ -23,7 +28,10 @@ export class AdminDashboardComponent implements OnInit {
 
   carregarDados() {
     this.adminService.getMetricas().subscribe({
-      next: (dados: any) => this.metricas = dados,
+      next: (dados: any) => {
+        this.metricas = dados;
+        this.cdr.detectChanges(); // <-- FORÇA O ANGULAR A ATUALIZAR OS CARDS
+      },
       error: () => this.logout()
     });
 
@@ -31,16 +39,17 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   carregarHistorico() {
-  this.adminService.getHistorico(this.page, this.size).subscribe({
-    next: (res: any) => {
-      this.pedidos = res.content;
-      this.totalPages = res.totalPages;
-    },
-    error: (err: any) => {
-      console.error('Erro ao carregar o histórico de pedidos:', err);
-    }
-  });
-}
+    this.adminService.getHistorico(this.page, this.size).subscribe({
+      next: (res: any) => {
+        this.pedidos = res.content;
+        this.totalPages = res.totalPages;
+        this.cdr.detectChanges(); // <-- FORÇA O ANGULAR A ATUALIZAR A TABELA
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar o histórico de pedidos:', err);
+      }
+    });
+  }
 
   mudarPagina(novaPagina: number) {
     this.page = novaPagina;
@@ -49,7 +58,7 @@ export class AdminDashboardComponent implements OnInit {
 
   exportarCSV() {
     this.adminService.exportarCsv().subscribe({
-      next: (blob: Blob) => { // CORRIGIDO: Adicionado ": Blob"
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
