@@ -23,6 +23,9 @@ export class OrderComponent implements OnInit {
   whatsappUrlFallback: string = '';
   horarioOcupado: boolean = false;
 
+  // 🌟 NOVA PROPRIEDADE: Tipo de entrega selecionada (padrão: ENTREGA)
+  tipoEntrega: 'ENTREGA' | 'RETIRADA' = 'ENTREGA';
+
   produtos: any[] = [
     // Salgados fritos
     { id: 1, nome: 'Coxinha de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
@@ -40,7 +43,7 @@ export class OrderComponent implements OnInit {
     { id: 11, nome: 'Empada', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 12, nome: 'Pastel de Forno', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
     { id: 13, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 14, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 14, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, font_weight: 'bold', categoria: 'SALGADOS_ASSADOS' },
 
     // Doces finos
     { id: 15, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
@@ -85,6 +88,9 @@ export class OrderComponent implements OnInit {
       uf: [savedClient.uf || '', Validators.required]
     });
 
+    // 🌟 INICIALIZAÇÃO: Define os validadores iniciais com base na opção padrão
+    this.setTipoEntrega(this.tipoEntrega);
+
     this.orderForm.get('data')?.valueChanges.subscribe((data: any) => {
       if (data) {
         this.apiService.validarData(data).subscribe({
@@ -97,6 +103,30 @@ export class OrderComponent implements OnInit {
         });
       }
     });
+  }
+
+  // 🌟 NOVA FUNÇÃO: Gerencia as validações dinamicamente sem quebrar o formulário
+  setTipoEntrega(tipo: 'ENTREGA' | 'RETIRADA'): void {
+    this.tipoEntrega = tipo;
+    const camposEndereco = ['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf'];
+
+    if (tipo === 'RETIRADA') {
+      camposEndereco.forEach(campo => {
+        const controle = this.orderForm.get(campo);
+        controle?.clearValidators();
+        controle?.updateValueAndValidity();
+      });
+    } else {
+      camposEndereco.forEach(campo => {
+        const controle = this.orderForm.get(campo);
+        if (campo === 'cep') {
+          controle?.setValidators([Validators.required, Validators.minLength(8)]);
+        } else {
+          controle?.setValidators([Validators.required]);
+        }
+        controle?.updateValueAndValidity();
+      });
+    }
   }
 
   validarTelefone = (control: AbstractControl): { [key: string]: boolean } | null => {
@@ -162,7 +192,6 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  // 🌟 MODIFICADO: Agora consulta a quantidade usando o ID puro e o Sabor selecionado na tela
   getQuantidade(prod: any): number {
     try {
       const sabor = prod.saborSelecionado || null;
@@ -172,13 +201,12 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  // 🌟 MODIFICADO: Adiciona o item ao carrinho repassando o ID como número e guardando o sabor isolado
   adicionarProduto(prod: any): void {
     const sabor = prod.saborSelecionado || null;
     const nomeFinal = sabor ? `${prod.nome} (${sabor})` : prod.nome;
 
     const itemCarrinho = {
-      id: prod.id, // Número puro
+      id: prod.id,
       nome: nomeFinal,
       precoUnitario: prod.precoUnitario,
       quantidade: 1,
@@ -188,7 +216,6 @@ export class OrderComponent implements OnInit {
     this.cartService.adicionarItem(itemCarrinho);
   }
 
-  // 🌟 MODIFICADO: Remove o item informando o ID puro e o sabor selecionado
   removerProduto(prod: any): void {
     const sabor = prod.saborSelecionado || null;
     this.cartService.removerItem(prod.id, sabor);
@@ -216,20 +243,22 @@ export class OrderComponent implements OnInit {
     const dadosForm = this.orderForm.value;
     const itensCarrinho = this.cartService.getSnapshot() || [];
 
-    const complementoFormatado = dadosForm.complemento ? ` - ${dadosForm.complemento}` : '';
-    const enderecoCompleto = `${dadosForm.logradouro}, ${dadosForm.numero}${complementoFormatado}, ${dadosForm.bairro}, ${dadosForm.cidade} - ${dadosForm.uf}, CEP: ${dadosForm.cep}`;
+    // 🌟 CORRIGIDO: Tratamento dinâmico para a string do endereço completo
+    let enderecoCompleto = 'Retirada na Confeitaria';
+    if (this.tipoEntrega === 'ENTREGA') {
+      const complementoFormatado = dadosForm.complemento ? ` - ${dadosForm.complemento}` : '';
+      enderecoCompleto = `${dadosForm.logradouro}, ${dadosForm.numero}${complementoFormatado}, ${dadosForm.bairro}, ${dadosForm.cidade} - ${dadosForm.uf}, CEP: ${dadosForm.cep}`;
+    }
 
     let totalCalculado = 0;
 
-    // 🌟 MODIFICADO: Mapeamento limpo enviando o ID numérico nativo para o back-end Java
     const itensPayload = itensCarrinho.map((item: any) => {
       totalCalculado += (item.precoUnitario * item.quantidade);
-      
       return {
-        produto: { id: item.id }, // ID numérico puro!
+        produto: { id: item.id },
         quantidade: item.quantidade,
         precoPraticado: item.precoUnitario,
-        sabor: item.sabor || null // Repassa string ou nulo sem misturar com o ID
+        sabor: item.sabor || null
       };
     });
 
@@ -239,17 +268,22 @@ export class OrderComponent implements OnInit {
         telefone: dadosForm.telefone,
         endereco: enderecoCompleto
       },
+      tipoEntrega: this.tipoEntrega, // 🌟 ENVIANDO O TIPO AO BACK-END
       dataEncomenda: dadosForm.data,
       horarioEncomenda: dadosForm.horario + ":00",
       valorTotal: totalCalculado,
       itens: itensPayload
     };
 
+    // FORMATANDO MENSAGEM DO WHATSAPP DE ACORDO COM A ESCOLHA
     const whatsappMessageParts: string[] = [];
     whatsappMessageParts.push('*NOVO PEDIDO CONFIRMADO*');
     whatsappMessageParts.push('');
     whatsappMessageParts.push(`*Cliente:* ${dadosForm.nome}`);
-    whatsappMessageParts.push(`*Endereço:* ${enderecoCompleto}`);
+    whatsappMessageParts.push(`*Opção:* ${this.tipoEntrega === 'ENTREGA' ? 'Entrega ao domicílio' : 'Retirada no Local'}`);
+    if (this.tipoEntrega === 'ENTREGA') {
+      whatsappMessageParts.push(`*Endereço:* ${enderecoCompleto}`);
+    }
     whatsappMessageParts.push(`*Data:* ${dadosForm.data} às ${dadosForm.horario}`);
     whatsappMessageParts.push('');
     whatsappMessageParts.push('*ITENS:*');
@@ -304,6 +338,8 @@ export class OrderComponent implements OnInit {
 
   voltarAoInicio(): void {
     this.orderForm.reset();
+    this.tipoEntrega = 'ENTREGA'; // Reseta para a opção padrão
+    this.setTipoEntrega('ENTREGA');
     this.whatsappUrlFallback = '';
     this.step = 1;
   }

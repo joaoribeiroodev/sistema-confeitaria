@@ -3,26 +3,28 @@ package com.sistema.confeitaria.dto;
 import com.sistema.confeitaria.model.Pedido;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime; // <-- IMPORTANTE ADICIONAR O IMPORT
+import java.time.LocalTime;
 
 public class PedidoResumoDTO {
     private Long id;
     private String nomeCliente;
-    private String enderecoCliente; // <-- NOVO CAMPO
+    private String enderecoCliente;
     private LocalDate dataEncomenda;
-    private LocalTime horarioEncomenda; // <-- NOVO CAMPO
+    private LocalTime horarioEncomenda;
     private BigDecimal valorTotal;
+    private String tipoEntrega; // 🌟 NOVO CAMPO NO DTO
 
     public PedidoResumoDTO(Pedido pedido) {
         this.id = pedido.getId();
         this.nomeCliente = pedido.getCliente() != null ? pedido.getCliente().getNome() : "-";
-        this.enderecoCliente = pedido.getCliente() != null ? pedido.getCliente().getEndereco() : "-"; // <-- NOVO MAPEAMENTO
+        this.enderecoCliente = pedido.getCliente() != null ? pedido.getCliente().getEndereco() : "-";
         this.dataEncomenda = pedido.getDataEncomenda();
-        this.horarioEncomenda = pedido.getHorarioEncomenda(); // <-- NOVO MAPEAMENTO
-        // A conversão de Double para BigDecimal é feita aqui
+        this.horarioEncomenda = pedido.getHorarioEncomenda();
         this.valorTotal = pedido.getValorTotal() != null ? BigDecimal.valueOf(pedido.getValorTotal()) : BigDecimal.ZERO;
+        this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA"; // 🌟 MAPEAMENTO DO NOVO CAMPO
     }
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -69,5 +71,13 @@ public class PedidoResumoDTO {
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public String getTipoEntrega() {
+        return tipoEntrega;
+    }
+
+    public void setTipoEntrega(String tipoEntrega) {
+        this.tipoEntrega = tipoEntrega;
     }
 }

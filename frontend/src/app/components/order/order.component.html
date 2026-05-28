@@ -59,7 +59,38 @@
             </div>
           </div>
 
-          <div class="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 relative overflow-hidden">
+          <div class="space-y-3 mt-8">
+            <label class="block text-sm font-bold text-stone-600 pl-1">Como deseja receber sua encomenda?</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div (click)="setTipoEntrega('RETIRADA')"
+                   class="cursor-pointer border-2 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+                   [ngClass]="tipoEntrega === 'RETIRADA' ? 'border-rose-500 bg-rose-50 shadow-md shadow-rose-100' : 'border-stone-100 bg-white hover:border-rose-200'">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-colors"
+                     [ngClass]="tipoEntrega === 'RETIRADA' ? 'bg-rose-500 text-white' : 'bg-stone-50 text-stone-400'">
+                  🏪
+                </div>
+                <div>
+                  <h4 class="font-bold text-stone-800">Vou buscar</h4>
+                  <p class="text-xs text-stone-500 font-medium">Retirar na confeitaria</p>
+                </div>
+              </div>
+
+              <div (click)="setTipoEntrega('ENTREGA')"
+                   class="cursor-pointer border-2 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+                   [ngClass]="tipoEntrega === 'ENTREGA' ? 'border-rose-500 bg-rose-50 shadow-md shadow-rose-100' : 'border-stone-100 bg-white hover:border-rose-200'">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-colors"
+                     [ngClass]="tipoEntrega === 'ENTREGA' ? 'bg-rose-500 text-white' : 'bg-stone-50 text-stone-400'">
+                  🛵
+                </div>
+                <div>
+                  <h4 class="font-bold text-stone-800">Receber em casa</h4>
+                  <p class="text-xs text-stone-500 font-medium">Entrega no seu endereço</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="tipoEntrega === 'ENTREGA'" class="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 relative overflow-hidden animate-fade-in">
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/20 to-rose-200/20 rounded-bl-[100px] -z-10"></div>
 
             <h3 class="text-base font-bold text-orange-900 mb-5 flex items-center gap-2">
