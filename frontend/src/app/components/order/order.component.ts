@@ -268,7 +268,7 @@ export class OrderComponent implements OnInit {
         telefone: dadosForm.telefone,
         endereco: enderecoCompleto
       },
-      tipoEntrega: this.tipoEntrega, // 🌟 ENVIANDO O TIPO AO BACK-END
+      tipoEntrega: this.tipoEntrega, // ENVIANDO O TIPO AO BACK-END
       dataEncomenda: dadosForm.data,
       horarioEncomenda: dadosForm.horario + ":00",
       valorTotal: totalCalculado,
