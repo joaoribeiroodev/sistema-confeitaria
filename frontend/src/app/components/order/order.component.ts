@@ -66,22 +66,22 @@ export class OrderComponent implements OnInit {
     public cartService: CartService,
     private apiService: ApiService,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef // Injetando o ChangeDetectorRef aqui
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     const savedClient = JSON.parse(localStorage.getItem('cliente_dados') || '{}');
 
+    // Todos os campos com Validators.required habilitados e integrados
     this.orderForm = this.fb.group({
       nome: [savedClient.nome || '', Validators.required],
-      telefone: [savedClient.telefone || '', Validators.required],
-      cpf: [savedClient.cpf || '', [Validators.required, this.validarCPF]],
+      telefone: [savedClient.telefone || '', [Validators.required, this.validarTelefone]],
       data: ['', Validators.required],
       horario: ['', Validators.required],
       cep: [savedClient.cep || '', [Validators.required, Validators.minLength(8)]],
       logradouro: [savedClient.logradouro || '', Validators.required],
       numero: [savedClient.numero || '', Validators.required],
-      complemento: [savedClient.complemento || ''],
+      complemento: [savedClient.complemento || '', Validators.required], // Tornou-se obrigatório conforme solicitado
       bairro: [savedClient.bairro || '', Validators.required],
       cidade: [savedClient.cidade || '', Validators.required],
       uf: [savedClient.uf || '', Validators.required]
@@ -100,6 +100,22 @@ export class OrderComponent implements OnInit {
       }
     });
   }
+
+  // Validador Customizado para checar se o número de telefone/WhatsApp é real no Brasil
+  validarTelefone = (control: AbstractControl): { [key: string]: boolean } | null => {
+    if (!control.value) return null;
+
+    // Remove parênteses, traços e espaços, deixando só números
+    const numeroLimpo = control.value.toString().replace(/[^\d]+/g, '');
+
+    // Um número de celular/WhatsApp válido no Brasil tem que ter exatamente 11 dígitos (DDD + 9 + 8 dígitos)
+    // E não pode ser uma sequência de números iguais (ex: 11111111111)
+    if (numeroLimpo.length !== 11 || /^(\d)\1{10}$/.test(numeroLimpo)) {
+      return { telefoneInvalido: true };
+    }
+
+    return null;
+  };
 
   buscarCep(): void {
     const cepValue = this.orderForm.get('cep')?.value;
@@ -129,58 +145,32 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  validarCPF = (control: AbstractControl): { [key: string]: boolean } | null => {
-    if (!control.value) return null;
-
-    const cpf = control.value.toString().replace(/[^\d]+/g, '');
-    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return { cpfInvalido: true };
-
-    let soma = 0, resto;
-    for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i - 1, i), 10) * (11 - i);
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf.substring(9, 10), 10)) return { cpfInvalido: true };
-
-    soma = 0;
-    for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i - 1, i), 10) * (12 - i);
-    resto = (soma * 10) % 11;
-    if (resto === 10 || resto === 11) resto = 0;
-    if (resto !== parseInt(cpf.substring(10, 11), 10)) return { cpfInvalido: true };
-
-    return null;
-  };
-
   avancarParaMenu(): void {
-  if (this.orderForm.valid && !this.agendaLotada) {
-    const data = this.orderForm.get('data')?.value;
-    const horario = this.orderForm.get('horario')?.value;
+    if (this.orderForm.valid && !this.agendaLotada) {
+      const data = this.orderForm.get('data')?.value;
+      const horario = this.orderForm.get('horario')?.value;
 
-    // Consulta o backend antes de ir para o passo 2
-    this.apiService.verificarHorario(data, horario).subscribe({
-      next: (disponivel: boolean) => {
-        if (disponivel) {
-          // Horário livre! Salva os dados e avança.
-          this.horarioOcupado = false;
-          localStorage.setItem('cliente_dados', JSON.stringify(this.orderForm.value));
-          this.step = 2;
-
-          // Força o Angular a atualizar a tela imediatamente!
-          this.cdr.detectChanges();
-        } else {
-          // Horário ocupado! Barra o avanço e avisa o usuário.
-          this.horarioOcupado = true;
-          alert('Este horário já foi reservado por outro cliente. Por favor, escolha outro horário.');
+      this.apiService.verificarHorario(data, horario).subscribe({
+        next: (disponivel: boolean) => {
+          if (disponivel) {
+            this.horarioOcupado = false;
+            localStorage.setItem('cliente_dados', JSON.stringify(this.orderForm.value));
+            this.step = 2;
+            this.cdr.detectChanges();
+          } else {
+            this.horarioOcupado = true;
+            alert('Este horário já foi reservado por outro cliente. Por favor, escolha outro horário.');
+          }
+        },
+        error: () => {
+          alert('Ocorreu um erro ao verificar o horário. Tente novamente.');
         }
-      },
-      error: () => {
-        alert('Ocorreu um erro ao verificar o horário. Tente novamente.');
-      }
-    });
-  } else {
-    // Se o formulário for inválido, marca os campos em vermelho
-    this.orderForm.markAllAsTouched();
+      });
+    } else {
+      // Se o usuário clicar em enviar com campos vazios, marca e destaca todos em vermelho na tela
+      this.orderForm.markAllAsTouched();
+    }
   }
-}
 
   getQuantidade(id: number | string): number {
     try {
@@ -261,7 +251,6 @@ export class OrderComponent implements OnInit {
       cliente: {
         nome: dadosForm.nome,
         telefone: dadosForm.telefone,
-        cpf: dadosForm.cpf,
         endereco: enderecoCompleto
       },
       dataEncomenda: dadosForm.data,
@@ -304,32 +293,25 @@ export class OrderComponent implements OnInit {
         if (typeof this.cartService.clear === 'function') this.cartService.clear();
 
         this.step = 3;
-
-        // Força a atualização da tela imediatamente após mudar de step
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        if (popup) popup.close(); // Fecha o popup do whatsapp que falhou
+        if (popup) popup.close();
 
-        // Captura a mensagem de erro vinda do backend ou exibe uma genérica
         let mensagemErro = 'Ocorreu um erro inesperado ao salvar o seu pedido.';
 
         if (err.error && typeof err.error === 'string') {
-          mensagemErro = err.error; // Pega o erro direto se for string
+          mensagemErro = err.error;
         } else if (err.error && err.error.message) {
-          mensagemErro = err.error.message; // Pega do formato padrão do Spring Boot
+          mensagemErro = err.error.message;
         }
 
-        // Limpa o texto para remover o status HTTP e aspas (Ex: 409 CONFLICT "Mensagem" -> Mensagem)
         mensagemErro = mensagemErro
-          .replace(/^\d{3}\s[A-Z_]+\s/, '') // Remove códigos como "409 CONFLICT " ou "400 BAD_REQUEST "
-          .replace(/^"/, '')                // Remove aspas do começo do texto
-          .replace(/"$/, '');               // Remove aspas do final do texto
+          .replace(/^\d{3}\s[A-Z_]+\s/, '')
+          .replace(/^"/, '')
+          .replace(/"$/, '');
 
-        // Exibe o alerta amigável
         alert('Atenção: ' + mensagemErro);
-
-        // Garante que a tela reflita as mudanças em caso de erro também
         this.cdr.detectChanges();
       }
     });
