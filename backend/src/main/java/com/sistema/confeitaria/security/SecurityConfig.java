@@ -37,6 +37,7 @@ public class SecurityConfig {
                         "/api/auth/**",
                         "/api/pedidos",
                         "/api/pedidos/validar-data",
+                        "/api/pedidos/validar-horario",
                         "/api/pedidos/verificar-horario",
                         "/error",
                         "/v3/api-docs/**",
@@ -54,7 +55,6 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Origens permitidas (Substitua pela sua URL personalizada da Vercel)
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:4200", 
             "https://delicias-da-nalva.vercel.app" 

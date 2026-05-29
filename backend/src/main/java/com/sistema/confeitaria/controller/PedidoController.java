@@ -42,13 +42,10 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.listarTodos());
     }
 
-    // 🌟 NOVO ENDPOINT: Gerencia e dispara o fluxo de download do arquivo Excel estruturado
     @GetMapping("/admin/exportar-excel")
     public ResponseEntity<byte[]> exportarExcelMensal(@RequestParam int ano, @RequestParam int mes) {
         try {
             byte[] relatorioBytes = pedidoService.gerarRelatorioExcelMensal(ano, mes);
-            
-            // Define o nome de saída dinâmico com zeros à esquerda no mês para manter o padrão (ex: 05)
             String nomeArquivo = String.format("relatorio-pedidos-%02d-%d.xlsx", mes, ano);
 
             return ResponseEntity.ok()

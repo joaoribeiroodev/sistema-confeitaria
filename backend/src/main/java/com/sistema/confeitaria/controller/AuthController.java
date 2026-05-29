@@ -26,6 +26,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+  
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
