@@ -1,19 +1,15 @@
-# ✨ Delícias da Nalva — Sistema de Encomendas
+<div align="center">
 
-> Plataforma completa de **e-commerce e gestão de encomendas** para confeitaria artesanal: vitrine pública para venda de salgados e doces sob encomenda + painel administrativo com controle de produção, faturamento e relatórios gerenciais.
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=🎂+Sistema+Confeitaria;Fullstack+com+Spring+Boot+%2B+Angular;Gestão+de+Pedidos+%26+Produção" alt="Typing SVG" />
 
----
+<br/>
+<br/>
 
-## 🚀 Funcionalidades
+**Plataforma fullstack para gerenciamento de encomendas de uma confeitaria artesanal.**
+Vitrine pública para pedidos · Painel administrativo · Controle de produção · Relatórios gerenciais.
 
-- 🛒 Carrinho de compras dinâmico com agendamento de data de retirada
-- 🏭 Painel admin com **fila de produção** e atualização de status em tempo real
-- 📊 Dashboard com **gráficos de faturamento** e métricas de pico de vendas
-- 📥 Exportação de **relatórios mensais em `.xlsx`** (Excel nativo via Apache POI)
-- 🔐 Autenticação **JWT** com filtros no back-end e Route Guards + Interceptors no front-end
-- 📱 **PWA** — instalável como app no celular do cliente
+<br/>
 
----
 
 ## 🛠️ Stack
 
@@ -39,27 +35,190 @@
 </div>
 
 ---
+<br/>
 
-## ⚡ Como executar
+![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square&logo=github-actions)
+![Version](https://img.shields.io/badge/version-v1.0.0-informational?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+![Status](https://img.shields.io/badge/status-active-success?style=flat-square)
 
-> **Requisito:** [Docker](https://www.docker.com/get-started) instalado.
+</div>
+
+---
+
+## 🧭 Visão Geral
+
+O **Sistema Confeitaria** resolve o problema de gestão manual de encomendas artesanais, digitalizando todo o fluxo — do pedido do cliente até a entrega.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        SISTEMA CONFEITARIA                      │
+├──────────────────────────┬──────────────────────────────────────┤
+│   🛍️  VITRINE PÚBLICA     │      🔧  PAINEL ADMINISTRATIVO       │
+│   Angular 21 · PWA       │      Angular 21 · Route Guard        │
+│                          │                                      │
+│  · Catálogo de produtos  │  · Fila de pedidos em tempo real     │
+│  · Carrinho de compras   │  · Atualização de status             │
+│  · Agendamento de data   │  · Exportação de relatórios .xlsx    │
+│  · Validação de limite   │  · Controle de capacidade diária     │
+└──────────────┬───────────┴──────────────────┬───────────────────┘
+               │                              │
+               ▼          REST API            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  ☕  BACKEND — Spring Boot 3.2.5                 │
+│                                                                 │
+│   Spring Security · JWT Auth · Spring Data JPA · Apache POI    │
+│   Springdoc OpenAPI (Swagger) · Limite de pedidos por dia       │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+                               ▼
+               ┌───────────────────────────┐
+               │  🗄️  MySQL 8.0  (Docker)  │
+               └───────────────────────────┘
+```
+
+---
+
+## ⚡ Stack Tecnológica
+
+<details open>
+<summary><strong>☕ Backend</strong></summary>
+
+<br/>
+
+| Tecnologia | Versão | Função |
+|---|---|---|
+| **Java** | 21 LTS | Linguagem principal — records, sealed classes, pattern matching |
+| **Spring Boot** | 3.2.5 | Framework da API REST, auto-configuração e IoC |
+| **Spring Security** | 6.x | Autenticação, autorização e filtros por rota |
+| **Spring Data JPA** | 3.x | Abstração de repositórios e queries sobre o banco |
+| **JWT (JJWT)** | 0.11.5 | Tokens stateless para autenticação sem sessão |
+| **Apache POI** | 5.2.5 | Geração de relatórios gerenciais em `.xlsx` (Excel) |
+| **Springdoc OpenAPI** | 2.5.0 | Documentação interativa via Swagger UI |
+| **Lombok** | — | Redução de boilerplate com anotações |
+| **Maven** | 3.x | Build e gerenciamento de dependências |
+
+</details>
+
+<details open>
+<summary><strong>🅰️ Frontend</strong></summary>
+
+<br/>
+
+| Tecnologia | Versão | Função |
+|---|---|---|
+| **Angular** | 21 | Framework SPA com Signals e componentes standalone |
+| **TypeScript** | 5.9 | Tipagem estática, interfaces e decorators |
+| **Tailwind CSS** | 4.x | Estilização utility-first e design responsivo |
+| **RxJS** | 7.8 | Programação reativa: Observables, pipes e operadores |
+| **Angular Router** | 21 | Navegação SPA com `canActivate` Guard |
+| **Angular Service Worker** | 21 | PWA — app instalável com cache offline |
+
+</details>
+
+<details open>
+<summary><strong>🐳 Infraestrutura</strong></summary>
+
+<br/>
+
+| Tecnologia | Função |
+|---|---|
+| **Docker** | Containerização da API, banco e frontend |
+| **Docker Compose** | Orquestração completa dos 3 serviços com rede interna |
+| **Nginx** | Serve o build Angular e faz proxy reverso em produção |
+| **MySQL 8.0** | Banco relacional com timezone configurado para `America/Sao_Paulo` |
+| **H2 Database** | Banco em memória para testes automatizados |
+| **GitHub Actions** | CI/CD para validação e build automatizados |
+
+</details>
+
+---
+
+## ✨ Funcionalidades
+
+### 🛍️ Experiência do Cliente
+- Catálogo de produtos com seleção e carrinho dinâmico
+- Agendamento de data de retirada com validação em tempo real
+- Verificação automática de limite de pedidos por dia
+- Confirmação de pedido com feedback visual
+- **Instalável como app** no celular via PWA
+
+### 🔧 Painel Administrativo
+- Login seguro com **JWT** — sessão protegida por `AdminGuard` no Angular
+- Fila de pedidos do dia com atualização de status de produção
+- Dashboard com métricas e histórico de pedidos
+- **Exportação de relatórios** mensais em `.xlsx` via Apache POI
+
+### 🔒 Segurança
+- Autenticação **stateless com JWT** — sem sessão no servidor
+- `JwtFilter` no backend + `HttpInterceptor` no frontend para injeção automática do token
+- Rotas administrativas protegidas em dois níveis: frontend (Guard) e backend (Security)
+- Swagger desabilitado automaticamente no perfil de produção
+
+---
+
+## 🗺️ Rotas da Aplicação
+
+### Frontend (Angular)
+
+| Rota | Componente | Acesso |
+|---|---|---|
+| `/` | `OrderComponent` | 🌐 Público — vitrine de pedidos |
+| `/admin/login` | `AdminLoginComponent` | 🌐 Público — tela de login |
+| `/admin` | `AdminDashboardComponent` | 🔒 Privado — `AdminGuard` |
+
+### API REST (Backend)
+
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| `POST` | `/api/auth/login` | 🌐 Público | Login e geração do token JWT |
+| `POST` | `/api/pedidos` | 🌐 Público | Criação de novo pedido |
+| `GET` | `/api/pedidos/validar-data` | 🌐 Público | Verificar disponibilidade de data |
+| `GET` | `/api/pedidos/verificar-horario` | 🌐 Público | Verificar horário de atendimento |
+| `*` | `/api/admin/**` | 🔒 JWT | Endpoints administrativos |
+| `*` | `/api/pedidos/admin/**` | 🔒 JWT | Gestão de pedidos (admin) |
+
+---
+
+## 🚀 Como Executar
+
+**Pré-requisitos:** [Git](https://git-scm.com) · [Docker Desktop](https://www.docker.com/get-started)
+
+> Não é necessário ter Java, Node.js ou MySQL instalados localmente.
 
 ```bash
-# Clone o repositório
+# 1. Clone o repositório
 git clone https://github.com/joaoribeiroodev/sistema-confeitaria.git
 cd sistema-confeitaria
 
-# Configure as variáveis de ambiente
+# 2. Configure as variáveis de ambiente
 cp .env.example .env
+# Preencha o arquivo .env com seus valores
 
-# Suba todos os serviços (banco, back-end e front-end)
+# 3. Suba toda a stack
 docker-compose up --build
 ```
 
 | Serviço | URL |
 |---|---|
-| 🛍️ Vitrine Pública | `http://localhost:4200` |
-| 🔌 API REST | `http://localhost:8080` |
+| 🛍️ Vitrine | `http://localhost` |
+| 🔧 Admin | `http://localhost/admin/login` |
+| 🔌 API | `http://localhost:8080` |
+| 📄 Swagger | `http://localhost:8080/swagger-ui.html` |
+
+---
+
+## 📄 Documentação da API
+
+A documentação interativa é gerada automaticamente pelo **Springdoc OpenAPI**:
+
+```
+http://localhost:8080/swagger-ui.html
+```
+
+**Para testar endpoints autenticados:**
+1. Faça `POST /api/auth/login` e copie o `token` da resposta
+2. Clique em **🔒 Authorize** e informe `Bearer <seu-token>`
 
 ---
 
@@ -67,25 +226,45 @@ docker-compose up --build
 
 ```
 sistema-confeitaria/
-├── .github/workflows/      # CI/CD com GitHub Actions
-├── database/init.sql       # Script de inicialização do banco
-├── docker-compose.yml      # Orquestração dos containers
-├── backend/                # ☕ Spring Boot (API REST + Segurança + Relatórios)
-│   └── src/.../
-│       ├── controller/     # Endpoints REST
-│       ├── security/       # JWT Filter, Spring Security Config
-│       ├── service/        # Regras de negócio e geração de relatórios
-│       └── model/          # Entidades JPA
-└── frontend/               # 🅰️ Angular PWA
+├── 📁 .github/workflows/        → CI/CD com GitHub Actions
+├── 📁 database/                 → Script SQL de inicialização do banco
+├── 📄 docker-compose.yml        → Orquestração dos containers
+├── 📄 .env.example              → Variáveis necessárias (sem valores)
+│
+├── 📁 backend/                  ☕ Spring Boot 3 — API REST
+│   └── src/main/java/.../
+│       ├── config/              → SwaggerConfig
+│       ├── controller/          → Endpoints REST
+│       ├── dto/                 → Request / Response bodies
+│       ├── model/               → Entidades JPA
+│       ├── repository/          → Spring Data repositories
+│       ├── security/            → JwtFilter · JwtUtil · SecurityConfig
+│       └── service/             → Regras de negócio e relatórios
+│
+└── 📁 frontend/                 🅰️ Angular 21 — PWA
     └── src/app/
-        ├── components/     # Telas (vitrine, admin-dashboard, login)
-        ├── guards/         # Proteção de rotas administrativas
-        ├── interceptors/   # Injeção automática do Bearer Token
-        └── services/       # Comunicação com a API
+        ├── components/
+        │   ├── order/           → Vitrine pública e formulário de pedido
+        │   ├── admin-login/     → Tela de autenticação
+        │   └── admin-dashboard/ → Painel de gestão
+        ├── guards/              → AdminGuard (proteção de rota)
+        ├── interceptors/        → Injeção automática do Bearer Token
+        └── services/            → api · admin · cart
 ```
 
 ---
 
+## 👤 Autor
+
 <div align="center">
-  <p>Desenvolvido com ❤️ e muito ☕ por <strong>João Pedro Ribeiro</strong></p>
+
+**João Pedro Ribeiro**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/joão-pedro-ribeiro-a62913310)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/joaoribeiroodev)
+
+<br/>
+
+*Desenvolvido com ❤️ e muito ☕*
+
 </div>
