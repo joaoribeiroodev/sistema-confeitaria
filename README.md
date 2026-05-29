@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=30&pause=1000&color=F97316&center=true&vCenter=true&width=700&lines=🎂+Sistema+Confeitaria;Fullstack+Spring+Boot+%2B+Angular+21;Pedidos+·+Produção+·+Relatórios" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=%F0%9F%8E%82+Sistema+Confeitaria;Fullstack+com+Spring+Boot+%2B+Angular;Gest%C3%A3o+de+Pedidos+%26+Produ%C3%A7%C3%A3o" alt="Typing SVG" />
 
 <br/>
 
