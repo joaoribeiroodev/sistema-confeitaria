@@ -10,7 +10,7 @@
 <br/>
 
 [![🌐 Demo ao Vivo](https://img.shields.io/badge/🌐_Demo_ao_Vivo-delicias--da--nalva.vercel.app-F97316?style=for-the-badge)](https://delicias-da-nalva.vercel.app/)
-[![📄 Swagger Docs](https://img.shields.io/badge/📄_API_Docs-Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://sistema-confeitaria-backend.onrender.com/api/swagger-ui/index.html)
+[![📄 Swagger Docs](https://img.shields.io/badge/📄_API_Docs-Swagger_UI-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)](https://sistema-confeitaria-backend.onrender.com/swagger-ui/index.html)
 [![GitHub](https://img.shields.io/badge/Código_Fonte-181717?style=for-the-badge&logo=github)](https://github.com/joaoribeiroodev/sistema-confeitaria)
 
 <br/>
@@ -124,7 +124,7 @@ docker-compose up --build
 | `*` | `/api/admin/**` | 🔒 JWT | Endpoints administrativos |
 | `*` | `/api/pedidos/admin/**` | 🔒 JWT | Gestão de pedidos (admin) |
 
-> Documentação interativa completa: [Swagger UI →](https://sistema-confeitaria-backend.onrender.com/api/swagger-ui/index.html)
+> Documentação interativa completa: [Swagger UI →](https://sistema-confeitaria-backend.onrender.com/swagger-ui/index.html)
 
 </details>
 
