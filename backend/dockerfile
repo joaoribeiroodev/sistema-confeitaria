@@ -9,7 +9,13 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-# Limitação estrita de memória para rodar liso no plano gratuito depois
+
+# Limitação estrita de memória para rodar liso no plano gratuito
 ENV JAVA_OPTS="-Xmx256m -Xms128m"
-EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+
+# Define uma porta padrão caso rode local, mas o Render vai sobrescrever isso
+ENV PORT=8080
+EXPOSE $PORT
+
+# forçamos o Spring a ler a variável $PORT do Render
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=$PORT -jar app.jar"]
