@@ -43,10 +43,9 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html"
                     ).permitAll()
-                    // Adicionámos o "/api/pedidos/**" aqui nas rotas autenticadas
                     .requestMatchers("/api/admin/**", "/api/pedidos/admin/**", "/api/pedidos/**").authenticated() 
-                .anyRequest().denyAll()
-)
+                    .anyRequest().denyAll()
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -54,10 +53,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); 
+        
+        // Origens permitidas (Substitua pela sua URL personalizada da Vercel)
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:4200", 
+            "https://delicias-da-nalva.vercel.app" 
+        )); 
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true); 
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
