@@ -45,16 +45,37 @@ public class PedidoService {
         return !pedidoRepository.existsByDataEncomendaAndHorarioEncomenda(data, horario);
     }
 
+    // 🌟 NOVO MÉTODO: Verifica se o horário está dentro do expediente (07:00 às 18:00)
+    public boolean verificarHorarioFuncionamento(LocalTime horario) {
+        if (horario == null) {
+            return false;
+        }
+        LocalTime abertura = LocalTime.of(7, 0);
+        LocalTime fecho = LocalTime.of(18, 0);
+        
+        // Retorna true se NÃO for antes das 07:00 e NÃO for depois das 18:00
+        return !horario.isBefore(abertura) && !horario.isAfter(fecho);
+    }
+
     @Transactional
     public Pedido salvar(Pedido pedido) {
         if (!verificarDisponibilidade(pedido.getDataEncomenda())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Agenda lotada para este dia!");
         }
 
-        if (!verificarHorarioDisponivel(pedido.getDataEncomenda(), pedido.getHorarioEncomenda())) {
+        // 🌟 NOVA VALIDAÇÃO APLICADA AQUI: Bloqueia horários fora do expediente
+        if (!verificarHorarioFuncionamento(pedido.getHorarioEncomenda())) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, 
+                "Horário inválido! As encomendas devem ser agendadas entre as 07:00 e as 18:00."
+            );
+        }
+
+        if (!verificarHorarioDisponivel(pedido.getHorarioEncomenda() != null ? pedido.getDataEncomenda() : null, pedido.getHorarioEncomenda())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já foi reservado por outro cliente.");
         }
 
+        // Validação de Segurança no Backend para mínimo de 30 unidades POR ITEM
         if (pedido.getItens() != null) {
             for (ItemPedido item : pedido.getItens()) {
                 if (item.getQuantidade() < 30) {
@@ -123,7 +144,7 @@ public class PedidoService {
             fonteNormal.setFontName("Arial");
             fonteNormal.setFontHeightInPoints((short) 10);
             estiloBase.setFont(fonteNormal);
-            setBordasFinass(estiloBase);
+            setBordasFinas(estiloBase);
 
             CellStyle estiloData = workbook.createCellStyle();
             estiloData.cloneStyleFrom(estiloBase);
@@ -138,11 +159,6 @@ public class PedidoService {
             estiloMoeda.cloneStyleFrom(estiloBase);
             estiloMoeda.setDataFormat(workbook.createDataFormat().getFormat("R$ #,##0.00"));
             estiloMoeda.setAlignment(HorizontalAlignment.RIGHT);
-
-            CellStyle estiloMoedaZebra = workbook.createCellStyle();
-            estiloMoedaZebra.cloneStyleFrom(estiloMoeda);
-            estiloMoedaZebra.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-            estiloMoedaZebra.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
             String[] cabecalhos = {"ID Pedido", "Cliente", "WhatsApp", "Endereço Completo", "Data Encomenda", "Horário Encomenda", "Tipo Entrega", "Pagamento", "Status", "Valor Total"};
             Row rowCabecalho = sheet.createRow(0);
@@ -232,7 +248,7 @@ public class PedidoService {
         }
     }
 
-    private void setBordasFinass(CellStyle estilo) {
+    private void setBordasFinas(CellStyle estilo) {
         estilo.setBorderTop(BorderStyle.THIN);
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderLeft(BorderStyle.THIN);
