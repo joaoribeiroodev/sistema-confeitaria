@@ -70,12 +70,12 @@ export class OrderComponent implements OnInit {
     { id: 26, nome: 'Brigadeiro de leite ninho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
 
     // Salgados Congelados
-    { id: 27, nome: 'Coxinha de Frango (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 28, nome: 'Quibe (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 29, nome: 'Boliviano (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
-    { id: 30, nome: 'Risole (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 31, nome: 'Bolinho misto (queijo e presunto) (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 32, nome: 'Pastel de Forno/Frito (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO }
+    { id: 27, nome: 'Coxinha de Frango (Congelado)', precoUnitario: 1.50, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 28, nome: 'Quibe (Congelado)', precoUnitario: 1.50, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 29, nome: 'Boliviano (Congelado)', precoUnitario: 1.50, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 30, nome: 'Risole (Congelado)', precoUnitario: 1.50, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 31, nome: 'Bolinho misto (queijo e presunto) (Congelado)', precoUnitario: 1.50, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 32, nome: 'Pastel de Forno/Frito (Congelado)', precoUnitario: 1.50, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO }
   ];
 
   constructor(

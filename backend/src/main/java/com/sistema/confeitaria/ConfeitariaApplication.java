@@ -58,12 +58,12 @@ public class ConfeitariaApplication {
                     criarProduto("Brigadeiro de leite ninho", 1.80, Categoria.DOCES_SIMPLES),
 
                     // salgados congelados
-                    criarProduto("Coxinha de Frango (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
-                    criarProduto("Quibe (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
-                    criarProduto("Boliviano (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
-                    criarProduto("Risole (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
-                    criarProduto("Bolinho misto (queijo e presunto) (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
-                    criarProduto("Pastel de Forno/Frito (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS)
+                    criarProduto("Coxinha de Frango (Congelado)", 1.50, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Quibe (Congelado)", 1.50, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Boliviano (Congelado)", 1.50, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Risole (Congelado)", 1.50, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Bolinho misto (queijo e presunto) (Congelado)", 1.50, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Pastel de Forno/Frito (Congelado)", 1.50, Categoria.SALGADOS_CONGELADOS)
                 );
 
                 repository.saveAll(produtos);
