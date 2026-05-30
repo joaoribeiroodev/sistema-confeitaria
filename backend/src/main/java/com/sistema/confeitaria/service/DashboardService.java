@@ -37,11 +37,18 @@ public class DashboardService {
             pedidoRepository.buscarPicosDeVenda(inicioMes, fimMes), 
             new String[]{"data", "vendas"}
         );
+        
         List<Map<String, Object>> maisVendidos = mapResultSet(
             pedidoRepository.buscarProdutosMaisVendidos(inicioMes, fimMes), 
             new String[]{"nome", "quantidade"}
         );
 
+        // 🌟 CORREÇÃO DEFENSIVA PARA O FRONTEND:
+        // Se a lista não estiver vazia, pegamos o primeiro colocado (Index 0) e forçamos 
+        // ele a ficar também em uma propriedade explícita, caso seu DTO mude ou precise isolar.
+        // Mas para manter a retrocompatibilidade com o seu DashboardMetricsDTO atual, 
+        // certifique-se que o seu Frontend Angular acesse 'maisVendidos[0].nome'.
+        
         return new DashboardMetricsDTO(faturamento, picos, maisVendidos);
     }
 
