@@ -14,6 +14,7 @@ public class PedidoResumoDTO {
     private BigDecimal valorTotal;
     private String tipoEntrega;
     private String formaPagamento;
+    private String status; // 🌟 NOVO CAMPO DE STATUS ADICIONADO AQUI
 
     public PedidoResumoDTO(Pedido pedido) {
         this.id = pedido.getId();
@@ -24,22 +25,81 @@ public class PedidoResumoDTO {
         this.valorTotal = pedido.getValorTotal() != null ? BigDecimal.valueOf(pedido.getValorTotal()) : BigDecimal.ZERO;
         this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA";
         this.formaPagamento = pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX";
+        
+        // 🌟 MAPEAMENTO DO NOVO CAMPO (Se for null, assume PENDENTE por precaução)
+        this.status = pedido.getStatus() != null ? pedido.getStatus() : "PENDENTE"; 
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getNomeCliente() { return nomeCliente; }
-    public void setNomeCliente(String nomeCliente) { this.nomeCliente = nomeCliente; }
-    public String getEnderecoCliente() { return enderecoCliente; }
-    public void setEnderecoCliente(String enderecoCliente) { this.enderecoCliente = enderecoCliente; }
-    public LocalDate getDataEncomenda() { return dataEncomenda; }
-    public void setDataEncomenda(LocalDate dataEncomenda) { this.dataEncomenda = dataEncomenda; }
-    public LocalTime getHorarioEncomenda() { return horarioEncomenda; }
-    public void setHorarioEncomenda(LocalTime horarioEncomenda) { this.horarioEncomenda = horarioEncomenda; }
-    public BigDecimal getValorTotal() { return valorTotal; }
-    public void setValorTotal(BigDecimal valorTotal) { this.valorTotal = valorTotal; }
-    public String getTipoEntrega() { return tipoEntrega; }
-    public void setTipoEntrega(String tipoEntrega) { this.tipoEntrega = tipoEntrega; }
-    public String getFormaPagamento() { return formaPagamento; }
-    public void setFormaPagamento(String formaPagamento) { this.formaPagamento = formaPagamento; }
+    // Getters e Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNomeCliente() {
+        return nomeCliente;
+    }
+
+    public void setNomeCliente(String nomeCliente) {
+        this.nomeCliente = nomeCliente;
+    }
+
+    public String getEnderecoCliente() {
+        return enderecoCliente;
+    }
+
+    public void setEnderecoCliente(String enderecoCliente) {
+        this.enderecoCliente = enderecoCliente;
+    }
+
+    public LocalDate getDataEncomenda() {
+        return dataEncomenda;
+    }
+
+    public void setDataEncomenda(LocalDate dataEncomenda) {
+        this.dataEncomenda = dataEncomenda;
+    }
+
+    public LocalTime getHorarioEncomenda() {
+        return horarioEncomenda;
+    }
+
+    public void setHorarioEncomenda(LocalTime horarioEncomenda) {
+        this.horarioEncomenda = horarioEncomenda;
+    }
+
+    public BigDecimal getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(BigDecimal valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public String getTipoEntrega() {
+        return tipoEntrega;
+    }
+
+    public void setTipoEntrega(String tipoEntrega) {
+        this.tipoEntrega = tipoEntrega;
+    }
+
+    public String getFormaPagamento() {
+        return formaPagamento;
+    }
+
+    public void setFormaPagamento(String formaPagamento) {
+        this.formaPagamento = formaPagamento;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

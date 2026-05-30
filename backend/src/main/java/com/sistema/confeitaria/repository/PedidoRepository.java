@@ -17,34 +17,34 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     // 1. Método automático do Spring para buscar pedidos entre duas datas
     List<Pedido> findByDataEncomendaBetween(LocalDate inicio, LocalDate fim);
 
-    // Busca e ordena todos os pedidos do intervalo para compor as linhas do Excel
+    // 2. Busca e ordena todos os pedidos do intervalo para compor as linhas do Excel
     List<Pedido> findByDataEncomendaBetweenOrderByDataEncomendaAscHorarioEncomendaAsc(LocalDate inicio, LocalDate fim);
 
-    // 2. Adicionado "AND p.status <> 'CANCELADO'" para ignorar pedidos cancelados no faturamento
-    @Query("SELECT COALESCE(SUM(p.valorTotal), 0) FROM Pedido p WHERE p.dataEncomenda BETWEEN :inicio AND :fim AND p.status <> 'CANCELADO'")
+    // 3. Soma o faturamento estritamente dos pedidos ENTREGUES
+    @Query("SELECT COALESCE(SUM(p.valorTotal), 0) FROM Pedido p WHERE p.dataEncomenda BETWEEN :inicio AND :fim AND p.status = 'ENTREGUE'")
     BigDecimal calcularFaturamentoPeriodo(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 
-    // 3. Agrupa as vendas por data para achar o dia com maior pico (Ignorando cancelados)
-    @Query("SELECT p.dataEncomenda, COUNT(p.id) FROM Pedido p WHERE p.dataEncomenda BETWEEN :inicio AND :fim AND p.status <> 'CANCELADO' GROUP BY p.dataEncomenda ORDER BY COUNT(p.id) DESC")
+    // 4. Agrupa os picos de venda considerando apenas os pedidos ENTREGUES
+    @Query("SELECT p.dataEncomenda, COUNT(p.id) FROM Pedido p WHERE p.dataEncomenda BETWEEN :inicio AND :fim AND p.status = 'ENTREGUE' GROUP BY p.dataEncomenda ORDER BY COUNT(p.id) DESC")
     List<Object[]> buscarPicosDeVenda(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 
-    // 4. Busca o Top 5 produtos mais vendidos do período
+    // 5. Busca o Top 5 produtos mais vendidos considerando apenas pedidos ENTREGUES
     @Query(value = "SELECT pr.nome AS nome, SUM(ip.quantidade) AS quantidade " +
             "FROM itens_pedido ip " +
             "JOIN produtos pr ON ip.produto_id = pr.id " +
             "JOIN pedidos p ON ip.pedido_id = p.id " +
             "WHERE p.data_encomenda BETWEEN :inicio AND :fim " +
-            "AND p.status <> 'CANCELADO' " + 
+            "AND p.status = 'ENTREGUE' " + 
             "GROUP BY pr.nome ORDER BY quantidade DESC LIMIT 5", nativeQuery = true)
     List<Object[]> buscarProdutosMaisVendidos(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 
-    //  Traz estritamente APENAS o nome do produto número 1 em vendas
+    // 6. Busca o produto Top 1 considerando apenas pedidos ENTREGUES
     @Query(value = "SELECT pr.nome " +
             "FROM itens_pedido ip " +
             "JOIN produtos pr ON ip.produto_id = pr.id " +
             "JOIN pedidos p ON ip.pedido_id = p.id " +
             "WHERE p.data_encomenda BETWEEN :inicio AND :fim " +
-            "AND p.status <> 'CANCELADO' " + 
+            "AND p.status = 'ENTREGUE' " + 
             "GROUP BY pr.id, pr.nome ORDER BY SUM(ip.quantidade) DESC LIMIT 1", nativeQuery = true)
     String buscarProdutoMaisVendidoTop1(@Param("inicio") LocalDate inicio, @Param("fim") LocalDate fim);
 

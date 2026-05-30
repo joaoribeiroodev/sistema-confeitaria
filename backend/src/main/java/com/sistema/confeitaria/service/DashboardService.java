@@ -43,7 +43,7 @@ public class DashboardService {
             new String[]{"nome", "quantidade"}
         );
 
-        // 🌟 CORREÇÃO DEFENSIVA PARA O FRONTEND:
+        
         // Se a lista não estiver vazia, pegamos o primeiro colocado (Index 0) e forçamos 
         // ele a ficar também em uma propriedade explícita, caso seu DTO mude ou precise isolar.
         // Mas para manter a retrocompatibilidade com o seu DashboardMetricsDTO atual, 
