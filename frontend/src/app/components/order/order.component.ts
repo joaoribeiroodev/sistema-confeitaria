@@ -23,11 +23,13 @@ export class OrderComponent implements OnInit {
   whatsappUrlFallback: string = '';
   horarioOcupado: boolean = false;
 
-  // 🌟 NOVA PROPRIEDADE: Tipo de entrega selecionada (padrão: ENTREGA)
   tipoEntrega: 'ENTREGA' | 'RETIRADA' = 'ENTREGA';
+  formaPagamento: 'PIX' | 'DINHEIRO' = 'PIX';
+
+  avisoToast: string = '';
+  avisoTimeout: any;
 
   produtos: any[] = [
-    // Salgados fritos
     { id: 1, nome: 'Coxinha de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 2, nome: 'Quibe', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 3, nome: 'Boliviano', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
@@ -35,8 +37,6 @@ export class OrderComponent implements OnInit {
     { id: 5, nome: 'Bolinho misto (queijo e presunto)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 6, nome: 'Pastel frito', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
     { id: 7, nome: 'Salgados Congelados (todos)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
-
-    // Salgados assados
     { id: 8, nome: 'Empada de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 9, nome: 'Barquete', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 10, nome: 'Saltenha', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
@@ -44,8 +44,6 @@ export class OrderComponent implements OnInit {
     { id: 12, nome: 'Pastel de Forno', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
     { id: 13, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 14, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, font_weight: 'bold', categoria: 'SALGADOS_ASSADOS' },
-
-    // Doces finos
     { id: 15, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 16, nome: 'Limão', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 17, nome: 'Maracujá', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
@@ -53,8 +51,6 @@ export class OrderComponent implements OnInit {
     { id: 19, nome: 'Nozes', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 20, nome: 'Damasco', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
     { id: 21, nome: 'Prestígio', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-
-    // Doces simples
     { id: 22, nome: 'Brigadeiro', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
     { id: 23, nome: 'Casadinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
     { id: 24, nome: 'Beijinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
@@ -88,7 +84,6 @@ export class OrderComponent implements OnInit {
       uf: [savedClient.uf || '', Validators.required]
     });
 
-    // 🌟 INICIALIZAÇÃO: Define os validadores iniciais com base na opção padrão
     this.setTipoEntrega(this.tipoEntrega);
 
     this.orderForm.get('data')?.valueChanges.subscribe((data: any) => {
@@ -105,7 +100,6 @@ export class OrderComponent implements OnInit {
     });
   }
 
-  // 🌟 NOVA FUNÇÃO: Gerencia as validações dinamicamente sem quebrar o formulário
   setTipoEntrega(tipo: 'ENTREGA' | 'RETIRADA'): void {
     this.tipoEntrega = tipo;
     const camposEndereco = ['cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf'];
@@ -201,24 +195,50 @@ export class OrderComponent implements OnInit {
     }
   }
 
+  mostrarAviso(mensagem: string): void {
+    this.avisoToast = mensagem;
+    if (this.avisoTimeout) clearTimeout(this.avisoTimeout);
+    this.avisoTimeout = setTimeout(() => {
+      this.avisoToast = '';
+      this.cdr.detectChanges();
+    }, 4500);
+  }
+
   adicionarProduto(prod: any): void {
     const sabor = prod.saborSelecionado || null;
     const nomeFinal = sabor ? `${prod.nome} (${sabor})` : prod.nome;
+    const currentQty = this.getQuantidade(prod);
+
+    let qtdToAdd = 1;
+
+    if (currentQty === 0) {
+      qtdToAdd = 30;
+      this.mostrarAviso('O pedido mínimo por item é 30 unidades. Já preenchemos para você! ✨');
+    }
 
     const itemCarrinho = {
       id: prod.id,
       nome: nomeFinal,
       precoUnitario: prod.precoUnitario,
-      quantidade: 1,
+      quantidade: qtdToAdd,
       sabor: sabor
     };
 
     this.cartService.adicionarItem(itemCarrinho);
+    this.cdr.detectChanges();
   }
 
   removerProduto(prod: any): void {
     const sabor = prod.saborSelecionado || null;
-    this.cartService.removerItem(prod.id, sabor);
+    const currentQty = this.getQuantidade(prod);
+
+    if (currentQty <= 30 && currentQty > 0) {
+      this.cartService.removerItem(prod.id, sabor, currentQty);
+      this.mostrarAviso('Item removido. A quantidade não pode ser menor que o mínimo de 30 unidades. 🗑️');
+    } else {
+      this.cartService.removerItem(prod.id, sabor, 1);
+    }
+    this.cdr.detectChanges();
   }
 
   get totalItens(): number {
@@ -243,7 +263,6 @@ export class OrderComponent implements OnInit {
     const dadosForm = this.orderForm.value;
     const itensCarrinho = this.cartService.getSnapshot() || [];
 
-    // 🌟 CORRIGIDO: Tratamento dinâmico para a string do endereço completo
     let enderecoCompleto = 'Retirada na Confeitaria';
     if (this.tipoEntrega === 'ENTREGA') {
       const complementoFormatado = dadosForm.complemento ? ` - ${dadosForm.complemento}` : '';
@@ -268,14 +287,14 @@ export class OrderComponent implements OnInit {
         telefone: dadosForm.telefone,
         endereco: enderecoCompleto
       },
-      tipoEntrega: this.tipoEntrega, // ENVIANDO O TIPO AO BACK-END
+      tipoEntrega: this.tipoEntrega,
+      formaPagamento: this.formaPagamento,
       dataEncomenda: dadosForm.data,
       horarioEncomenda: dadosForm.horario + ":00",
       valorTotal: totalCalculado,
       itens: itensPayload
     };
 
-    // FORMATANDO MENSAGEM DO WHATSAPP DE ACORDO COM A ESCOLHA
     const whatsappMessageParts: string[] = [];
     whatsappMessageParts.push('*NOVO PEDIDO CONFIRMADO*');
     whatsappMessageParts.push('');
@@ -285,6 +304,7 @@ export class OrderComponent implements OnInit {
       whatsappMessageParts.push(`*Endereço:* ${enderecoCompleto}`);
     }
     whatsappMessageParts.push(`*Data:* ${dadosForm.data} às ${dadosForm.horario}`);
+    whatsappMessageParts.push(`*Pagamento:* ${this.formaPagamento}`);
     whatsappMessageParts.push('');
     whatsappMessageParts.push('*ITENS:*');
 
@@ -338,7 +358,8 @@ export class OrderComponent implements OnInit {
 
   voltarAoInicio(): void {
     this.orderForm.reset();
-    this.tipoEntrega = 'ENTREGA'; // Reseta para a opção padrão
+    this.tipoEntrega = 'ENTREGA';
+    this.formaPagamento = 'PIX';
     this.setTipoEntrega('ENTREGA');
     this.whatsappUrlFallback = '';
     this.step = 1;

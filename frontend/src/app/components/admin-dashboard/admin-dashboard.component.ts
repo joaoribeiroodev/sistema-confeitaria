@@ -22,7 +22,6 @@ export class AdminDashboardComponent implements OnInit {
   filtroStatusAtual: string = 'PENDENTE';
   qtdPendentesCard: number = 0;
 
-  // 🌟 NOVO CAMPO: Armazena o mês e ano do filtro (Inicia automaticamente no mês atual ex: "2026-05")
   mesFiltro: string = '';
 
   constructor(
@@ -36,7 +35,6 @@ export class AdminDashboardComponent implements OnInit {
     this.carregarDados();
   }
 
-  // Define o valor inicial do input baseado no mês vigente do sistema
   private inicializarFiltroMes() {
     const hoje = new Date();
     const ano = hoje.getFullYear();
@@ -123,7 +121,6 @@ export class AdminDashboardComponent implements OnInit {
     this.carregarHistorico();
   }
 
-  // 🌟 REFORMULADO: Divide a string do input "YYYY-MM", converte e baixa o .xlsx
   exportarPlanilhaExcel() {
     if (!this.mesFiltro) {
       alert('Por favor, selecione um mês válido!');
@@ -139,7 +136,6 @@ export class AdminDashboardComponent implements OnInit {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        // Nome padronizado igual ao do back-end para manter integridade
         a.download = `relatorio-pedidos-${mesStr}-${anoStr}.xlsx`;
         a.click();
         window.URL.revokeObjectURL(url);

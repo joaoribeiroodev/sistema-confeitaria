@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS produtos (
     categoria ENUM('SALGADOS_FRITOS', 'SALGADOS_ASSADOS', 'DOCES_FINOS', 'DOCES_SIMPLES') NOT NULL
 );
 
--- 3. Tabela de Pedidos (Atualizada com tipo_entrega)
+-- 3. Tabela de Pedidos
 CREATE TABLE IF NOT EXISTS pedidos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     cliente_id BIGINT,
@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS pedidos (
     horario_encomenda TIME NOT NULL,
     valor_total DECIMAL(10,2) NOT NULL,
     status VARCHAR(20) DEFAULT 'PENDENTE',
-    tipo_entrega VARCHAR(20) DEFAULT 'ENTREGA', -- 🌟 NOVA COLUNA INTEGRADA
+    tipo_entrega VARCHAR(20) DEFAULT 'ENTREGA',
+    forma_pagamento VARCHAR(20) DEFAULT 'PIX',
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
@@ -38,6 +39,6 @@ CREATE TABLE IF NOT EXISTS itens_pedido (
     quantidade INT NOT NULL,
     preco_praticado DECIMAL(10,2) NOT NULL,
     sabor VARCHAR(50) DEFAULT NULL,
-    FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );

@@ -69,6 +69,7 @@
                 <th class="p-4 pl-6">Cliente</th>
                 <th class="p-4">Data/Hora Encomenda</th>
                 <th class="p-4">Endereço unificado</th>
+                <th class="p-4">Pagamento</th>
                 <th class="p-4 pr-6 text-right">Total</th>
               </tr>
             </thead>
@@ -77,10 +78,11 @@
                 <td class="p-4 pl-6 font-bold text-stone-800">{{ pedido.nomeCliente || '-' }}</td>
                 <td class="p-4">{{ pedido.dataEncomenda | date:'dd/MM/yyyy' }} às {{ pedido.horarioEncomenda || '00:00' }}</td>
                 <td class="p-4 text-xs max-w-xs truncate" [title]="pedido.enderecoCliente">{{ pedido.enderecoCliente || '-' }}</td>
+                <td class="p-4 font-bold" [ngClass]="{'text-emerald-600': pedido.formaPagamento === 'DINHEIRO', 'text-orange-500': pedido.formaPagamento === 'PIX'}">{{ pedido.formaPagamento || 'PIX' }}</td>
                 <td class="p-4 pr-6 text-right font-black text-stone-900">R$ {{ pedido.valorTotal?.toFixed(2) || '0.00' }}</td>
               </tr>
               <tr *ngIf="!pedidos || pedidos.length === 0">
-                <td colspan="4" class="p-8 text-center text-stone-400 font-medium">Nenhum pedido encontrado.</td>
+                <td colspan="5" class="p-8 text-center text-stone-400 font-medium">Nenhum pedido encontrado.</td>
               </tr>
             </tbody>
           </table>
@@ -131,6 +133,7 @@
               <p>📅 <strong>Agendado para:</strong> {{ item.dataEncomenda | date:'dd/MM/yyyy' }} às {{ item.horarioEncomenda || '00:00' }}</p>
               <p>📍 <strong>Local:</strong> {{ item.cliente?.endereco || 'Retirada no Local' }}</p>
               <p>📱 <strong>Contato:</strong> {{ item.cliente?.telefone || '-' }}</p>
+              <p>💳 <strong>Pagamento:</strong> <span [ngClass]="{'text-emerald-600 font-bold': item.formaPagamento === 'DINHEIRO', 'text-orange-500 font-bold': item.formaPagamento === 'PIX'}">{{ item.formaPagamento || 'PIX' }}</span></p>
             </div>
 
             <div class="bg-stone-50 p-4 rounded-2xl mb-4">

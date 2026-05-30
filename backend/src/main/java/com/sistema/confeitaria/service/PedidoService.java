@@ -57,9 +57,16 @@ public class PedidoService {
 
         if (pedido.getItens() != null) {
             for (ItemPedido item : pedido.getItens()) {
+                if (item.getQuantidade() < 30) {
+                    throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, 
+                        "O pedido mínimo é de 30 unidades por item. Você solicitou apenas " + item.getQuantidade() + " de um dos produtos."
+                    );
+                }
                 item.setPedido(pedido);
             }
         }
+
         return pedidoRepository.save(pedido);
     }
 
@@ -67,8 +74,8 @@ public class PedidoService {
     public List<PedidoDashboardDTO> listarTodos() {
         List<Pedido> pedidos = pedidoRepository.findAll();
         return pedidos.stream()
-                .map(this::converterParaDashboardDTO)
-                .collect(Collectors.toList());
+            .map(this::converterParaDashboardDTO)
+            .collect(Collectors.toList());
     }
 
     public Page<PedidoResumoDTO> listarPedidosPaginados(Pageable pageable) {
@@ -87,7 +94,6 @@ public class PedidoService {
         return converterParaDashboardDTO(pedidoAtualizado);
     }
 
-    // 🌟 NOVO MÉTODO: Geração inteligente do arquivo .XLSX com dados do mês e formato R$
     @Transactional(readOnly = true)
     public byte[] gerarRelatorioExcelMensal(int ano, int mes) throws IOException {
         LocalDate dataInicio = LocalDate.of(ano, mes, 1);
@@ -97,9 +103,8 @@ public class PedidoService {
 
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Relatório Mensal");
-            sheet.setDisplayGridlines(true); // Garante que as linhas de grade apareçam no Excel
+            sheet.setDisplayGridlines(true);
 
-            // 1. Definição de Estilos e Fontes
             Font fonteCabecalho = workbook.createFont();
             fonteCabecalho.setFontName("Arial");
             fonteCabecalho.setFontHeightInPoints((short) 11);
@@ -108,12 +113,11 @@ public class PedidoService {
 
             CellStyle estiloCabecalho = workbook.createCellStyle();
             estiloCabecalho.setFont(fonteCabecalho);
-            estiloCabecalho.setFillForegroundColor(IndexedColors.ROSE.getIndex()); // Cor elegante para a Nalva
+            estiloCabecalho.setFillForegroundColor(IndexedColors.ROSE.getIndex());
             estiloCabecalho.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             estiloCabecalho.setAlignment(HorizontalAlignment.CENTER);
             estiloCabecalho.setVerticalAlignment(VerticalAlignment.CENTER);
 
-            // Estilos de Bordas Comuns
             CellStyle estiloBase = workbook.createCellStyle();
             Font fonteNormal = workbook.createFont();
             fonteNormal.setFontName("Arial");
@@ -121,31 +125,26 @@ public class PedidoService {
             estiloBase.setFont(fonteNormal);
             setBordasFinass(estiloBase);
 
-            // Formato de Data
             CellStyle estiloData = workbook.createCellStyle();
             estiloData.cloneStyleFrom(estiloBase);
             estiloData.setDataFormat(workbook.createDataFormat().getFormat("dd/mm/yyyy"));
             estiloData.setAlignment(HorizontalAlignment.CENTER);
 
-            // Formato de Horário e Alinhamentos Centrais
             CellStyle estiloCentro = workbook.createCellStyle();
             estiloCentro.cloneStyleFrom(estiloBase);
             estiloCentro.setAlignment(HorizontalAlignment.CENTER);
 
-            // 🌟 AQUI ESTÁ O FORMATO DE MOEDA NATIVO R$ (Mantém o número somável no Excel)
             CellStyle estiloMoeda = workbook.createCellStyle();
             estiloMoeda.cloneStyleFrom(estiloBase);
             estiloMoeda.setDataFormat(workbook.createDataFormat().getFormat("R$ #,##0.00"));
             estiloMoeda.setAlignment(HorizontalAlignment.RIGHT);
 
-            // Estilo Zebrado (Fundo cinza bem claro para legibilidade)
             CellStyle estiloMoedaZebra = workbook.createCellStyle();
             estiloMoedaZebra.cloneStyleFrom(estiloMoeda);
             estiloMoedaZebra.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
             estiloMoedaZebra.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-            // 2. Criação do Cabeçalho
-            String[] cabecalhos = {"ID Pedido", "Cliente", "WhatsApp", "Endereço Completo", "Data Encomenda", "Horário Encomenda", "Tipo Entrega", "Status", "Valor Total"};
+            String[] cabecalhos = {"ID Pedido", "Cliente", "WhatsApp", "Endereço Completo", "Data Encomenda", "Horário Encomenda", "Tipo Entrega", "Pagamento", "Status", "Valor Total"};
             Row rowCabecalho = sheet.createRow(0);
             rowCabecalho.setHeightInPoints(24);
 
@@ -155,15 +154,12 @@ public class PedidoService {
                 cell.setCellStyle(estiloCabecalho);
             }
 
-            // 3. Preenchimento das Linhas de Dados
             int rowNum = 1;
             DateTimeFormatter formatterData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
             for (Pedido pedido : pedidos) {
                 Row row = sheet.createRow(rowNum++);
-                boolean isZebra = (rowNum % 2 == 0);
 
-                // Aplicação de estilos customizados para cada tipo de dado
                 Cell cId = row.createCell(0);
                 cId.setCellValue(pedido.getId());
                 cId.setCellStyle(estiloCentro);
@@ -194,19 +190,21 @@ public class PedidoService {
                 cTipo.setCellValue(pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA");
                 cTipo.setCellStyle(estiloCentro);
 
-                Cell cStatus = row.createCell(7);
+                Cell cPag = row.createCell(7);
+                cPag.setCellValue(pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX");
+                cPag.setCellStyle(estiloCentro);
+
+                Cell cStatus = row.createCell(8);
                 cStatus.setCellValue(pedido.getStatus());
                 cStatus.setCellStyle(estiloCentro);
 
-                // Coluna do Faturamento em R$ (Passando como Double para o Excel aplicar a máscara)
-                Cell cValor = row.createCell(8);
+                Cell cValor = row.createCell(9);
                 cValor.setCellValue(pedido.getValorTotal() != null ? pedido.getValorTotal() : 0.0);
                 cValor.setCellStyle(estiloMoeda);
             }
 
-            // 4. Linha de Totalizador com Fórmula do Excel
             Row rowTotal = sheet.createRow(rowNum);
-            Cell labelTotal = rowTotal.createCell(7);
+            Cell labelTotal = rowTotal.createCell(8); 
             labelTotal.setCellValue("Total Geral:");
             Font fonteNegrito = workbook.createFont();
             fonteNegrito.setFontName("Arial");
@@ -216,19 +214,16 @@ public class PedidoService {
             estiloLabelTotal.setAlignment(HorizontalAlignment.RIGHT);
             labelTotal.setCellStyle(estiloLabelTotal);
 
-            Cell cellFormula = rowTotal.createCell(8);
-            // Injeta a fórmula SUM de forma nativa dinâmica baseado na quantidade de linhas geradas
-            cellFormula.setCellFormula("SUM(I2:I" + rowNum + ")"); 
+            Cell cellFormula = rowTotal.createCell(9);
+            cellFormula.setCellFormula("SUM(J2:J" + rowNum + ")"); 
             CellStyle estiloFormulaTotal = workbook.createCellStyle();
             estiloFormulaTotal.setFont(fonteNegrito);
             estiloFormulaTotal.setDataFormat(workbook.createDataFormat().getFormat("R$ #,##0.00"));
             estiloFormulaTotal.setAlignment(HorizontalAlignment.RIGHT);
             cellFormula.setCellStyle(estiloFormulaTotal);
 
-            // Auto-ajuste automático do tamanho das colunas para não cortar os textos
             for (int i = 0; i < cabecalhos.length; i++) {
                 sheet.autoSizeColumn(i);
-                // Dá um espaçamento extra de segurança na largura
                 sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 1200);
             }
 
@@ -279,6 +274,8 @@ public class PedidoService {
             pedido.getHorarioEncomenda(),
             pedido.getValorTotal(),
             pedido.getStatus(),
+            pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA",
+            pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX",
             clienteDTO,
             itensDTO
         );

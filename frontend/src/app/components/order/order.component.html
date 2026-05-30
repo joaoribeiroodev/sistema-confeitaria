@@ -1,4 +1,12 @@
-<div class="min-h-screen bg-stone-50 py-8 px-4 sm:px-6 lg:px-8 font-sans selection:bg-rose-200 flex flex-col justify-between">
+<div class="min-h-screen bg-stone-50 py-8 px-4 sm:px-6 lg:px-8 font-sans selection:bg-rose-200 flex flex-col justify-between relative">
+
+  <div *ngIf="avisoToast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] animate-fade-in w-11/12 sm:w-auto">
+    <div class="bg-stone-900/95 backdrop-blur-sm text-white px-6 py-4 rounded-2xl shadow-2xl border border-stone-700/50 flex items-center gap-3">
+      <span class="text-xl">💡</span>
+      <p class="text-sm font-bold tracking-wide">{{ avisoToast }}</p>
+    </div>
+  </div>
+
   <div class="max-w-3xl mx-auto w-full flex-grow">
 
     <div class="flex items-center justify-between mb-6 animate-fade-in">
@@ -90,7 +98,38 @@
             </div>
           </div>
 
-          <div *ngIf="tipoEntrega === 'ENTREGA'" class="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 relative overflow-hidden animate-fade-in">
+          <div class="space-y-3 mt-8">
+            <label class="block text-sm font-bold text-stone-600 pl-1">Forma de pagamento (Na entrega/retirada)</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div (click)="formaPagamento = 'PIX'"
+                   class="cursor-pointer border-2 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+                   [ngClass]="formaPagamento === 'PIX' ? 'border-orange-500 bg-orange-50 shadow-md shadow-orange-100' : 'border-stone-100 bg-white hover:border-orange-200'">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-colors"
+                     [ngClass]="formaPagamento === 'PIX' ? 'bg-orange-500 text-white' : 'bg-stone-50 text-stone-400'">
+                  📱
+                </div>
+                <div>
+                  <h4 class="font-bold text-stone-800">PIX</h4>
+                  <p class="text-xs text-stone-500 font-medium">Rápido e prático</p>
+                </div>
+              </div>
+
+              <div (click)="formaPagamento = 'DINHEIRO'"
+                   class="cursor-pointer border-2 rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+                   [ngClass]="formaPagamento === 'DINHEIRO' ? 'border-emerald-500 bg-emerald-50 shadow-md shadow-emerald-100' : 'border-stone-100 bg-white hover:border-emerald-200'">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-colors"
+                     [ngClass]="formaPagamento === 'DINHEIRO' ? 'bg-emerald-500 text-white' : 'bg-stone-50 text-stone-400'">
+                  💵
+                </div>
+                <div>
+                  <h4 class="font-bold text-stone-800">Dinheiro</h4>
+                  <p class="text-xs text-stone-500 font-medium">Pagamento em espécie</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="tipoEntrega === 'ENTREGA'" class="bg-orange-50/50 p-6 rounded-3xl border border-orange-100 relative overflow-hidden animate-fade-in mt-6">
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/20 to-rose-200/20 rounded-bl-[100px] -z-10"></div>
 
             <h3 class="text-base font-bold text-orange-900 mb-5 flex items-center gap-2">
@@ -146,7 +185,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 mt-6">
             <div class="space-y-1.5">
               <label class="block text-sm font-bold text-stone-600 pl-1">Data da Encomenda</label>
               <input type="date" formControlName="data"
@@ -167,7 +206,7 @@
           </div>
 
           <div class="pt-6">
-            <button type="submit" [disabled]="orderForm.invalid || agendaLotada"
+            <button type="submit" [disabled]="orderForm.invalid || agendaLotada || !formaPagamento"
               class="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white font-black text-lg p-4 rounded-2xl hover:from-rose-600 hover:to-orange-600 disabled:from-stone-300 disabled:to-stone-300 disabled:text-stone-500 disabled:cursor-not-allowed transition-all shadow-[0_8px_20px_rgba(244,63,94,0.3)] hover:shadow-[0_12px_25px_rgba(244,63,94,0.4)] hover:-translate-y-0.5 active:translate-y-0 disabled:shadow-none">
               Ir para o Cardápio ✨
             </button>
@@ -212,9 +251,11 @@
               </div>
 
               <div class="flex items-center justify-between mt-auto pt-4 border-t border-stone-50" [class.mt-4]="!prod.sabores">
-                <span class="text-2xl font-black text-stone-800">
-                  <span class="text-sm text-stone-400 font-bold mr-1">R$</span>{{ prod.precoUnitario.toFixed(2) }}
-                </span>
+                <div class="flex flex-col">
+                  <span class="text-2xl font-black text-stone-800">
+                    <span class="text-sm text-stone-400 font-bold mr-1">R$</span>{{ prod.precoUnitario.toFixed(2) }}
+                  </span>
+                </div>
 
                 <div class="flex items-center bg-stone-50 p-1 rounded-2xl border border-stone-100">
                   <button (click)="removerProduto(prod)"
@@ -279,18 +320,28 @@
 
     <div *ngIf="step === 2 && totalItens > 0" class="fixed bottom-6 left-4 right-4 max-w-3xl mx-auto z-50 animate-fade-in">
       <div class="bg-white/90 backdrop-blur-md border border-stone-200/50 p-4 sm:p-5 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div class="w-full sm:w-auto flex justify-between items-center gap-4 px-2">
-          <div class="flex flex-col">
-            <span class="font-bold text-stone-500 text-xs uppercase tracking-wider">Sua Encomenda</span>
-            <span class="font-black text-stone-800">{{ totalItens }} {{ totalItens === 1 ? 'item' : 'itens' }}</span>
+
+        <div class="w-full sm:w-auto flex flex-col justify-center items-start gap-1 px-2">
+          <div class="flex items-center gap-4">
+            <div class="flex flex-col">
+              <span class="font-bold text-stone-500 text-xs uppercase tracking-wider">Sua Encomenda</span>
+              <span class="font-black text-stone-800">
+                {{ totalItens }} {{ totalItens === 1 ? 'item' : 'itens' }}
+              </span>
+            </div>
+            <p class="text-3xl font-black text-emerald-600">R$ {{ totalValue.toFixed(2) }}</p>
           </div>
-          <p class="text-3xl font-black text-emerald-600">R$ {{ totalValue.toFixed(2) }}</p>
+
+          <div class="text-xs font-bold text-stone-400 mt-1 flex items-center gap-1">
+            <span>💡</span> Pedido mínimo de 30 unidades por item.
+          </div>
         </div>
 
         <button (click)="finalizarPedido()"
-          class="w-full sm:w-auto bg-emerald-500 text-white font-black px-8 py-4 rounded-2xl hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/30 text-center text-lg transform active:scale-95 cursor-pointer flex items-center justify-center gap-2">
+          class="w-full sm:w-auto font-black px-8 py-4 rounded-2xl transition-all text-center text-lg flex items-center justify-center gap-2 bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/30 transform active:scale-95 cursor-pointer">
           <span>💬</span> Concluir no WhatsApp
         </button>
+
       </div>
     </div>
 

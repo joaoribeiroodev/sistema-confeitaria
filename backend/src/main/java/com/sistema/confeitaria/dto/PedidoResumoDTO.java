@@ -12,7 +12,8 @@ public class PedidoResumoDTO {
     private LocalDate dataEncomenda;
     private LocalTime horarioEncomenda;
     private BigDecimal valorTotal;
-    private String tipoEntrega; // 🌟 NOVO CAMPO NO DTO
+    private String tipoEntrega;
+    private String formaPagamento;
 
     public PedidoResumoDTO(Pedido pedido) {
         this.id = pedido.getId();
@@ -21,63 +22,24 @@ public class PedidoResumoDTO {
         this.dataEncomenda = pedido.getDataEncomenda();
         this.horarioEncomenda = pedido.getHorarioEncomenda();
         this.valorTotal = pedido.getValorTotal() != null ? BigDecimal.valueOf(pedido.getValorTotal()) : BigDecimal.ZERO;
-        this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA"; // 🌟 MAPEAMENTO DO NOVO CAMPO
+        this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA";
+        this.formaPagamento = pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX";
     }
 
-    // Getters e Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNomeCliente() {
-        return nomeCliente;
-    }
-
-    public void setNomeCliente(String nomeCliente) {
-        this.nomeCliente = nomeCliente;
-    }
-
-    public String getEnderecoCliente() {
-        return enderecoCliente;
-    }
-
-    public void setEnderecoCliente(String enderecoCliente) {
-        this.enderecoCliente = enderecoCliente;
-    }
-
-    public LocalDate getDataEncomenda() {
-        return dataEncomenda;
-    }
-
-    public void setDataEncomenda(LocalDate dataEncomenda) {
-        this.dataEncomenda = dataEncomenda;
-    }
-
-    public LocalTime getHorarioEncomenda() {
-        return horarioEncomenda;
-    }
-
-    public void setHorarioEncomenda(LocalTime horarioEncomenda) {
-        this.horarioEncomenda = horarioEncomenda;
-    }
-
-    public BigDecimal getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
-    public String getTipoEntrega() {
-        return tipoEntrega;
-    }
-
-    public void setTipoEntrega(String tipoEntrega) {
-        this.tipoEntrega = tipoEntrega;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNomeCliente() { return nomeCliente; }
+    public void setNomeCliente(String nomeCliente) { this.nomeCliente = nomeCliente; }
+    public String getEnderecoCliente() { return enderecoCliente; }
+    public void setEnderecoCliente(String enderecoCliente) { this.enderecoCliente = enderecoCliente; }
+    public LocalDate getDataEncomenda() { return dataEncomenda; }
+    public void setDataEncomenda(LocalDate dataEncomenda) { this.dataEncomenda = dataEncomenda; }
+    public LocalTime getHorarioEncomenda() { return horarioEncomenda; }
+    public void setHorarioEncomenda(LocalTime horarioEncomenda) { this.horarioEncomenda = horarioEncomenda; }
+    public BigDecimal getValorTotal() { return valorTotal; }
+    public void setValorTotal(BigDecimal valorTotal) { this.valorTotal = valorTotal; }
+    public String getTipoEntrega() { return tipoEntrega; }
+    public void setTipoEntrega(String tipoEntrega) { this.tipoEntrega = tipoEntrega; }
+    public String getFormaPagamento() { return formaPagamento; }
+    public void setFormaPagamento(String formaPagamento) { this.formaPagamento = formaPagamento; }
 }
