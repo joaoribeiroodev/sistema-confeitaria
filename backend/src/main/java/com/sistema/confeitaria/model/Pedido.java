@@ -32,9 +32,12 @@ public class Pedido {
     @Column(length = 20)
     private String status = "PENDENTE";
 
-    // 🌟 NOVO CAMPO: Armazena se é "ENTREGA" ou "RETIRADA"
     @Column(name = "tipo_entrega", length = 20)
     private String tipoEntrega;
+
+    // 🌟 NOVO CAMPO: Forma de pagamento (PIX ou DINHEIRO)
+    @Column(name = "forma_pagamento", length = 20)
+    private String formaPagamento;
 
     // Mapeamento bidirecional correto com ItemPedido
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -19,6 +19,8 @@ public class PedidoDashboardDTO {
     private LocalTime horarioEncomenda;
     private Double valorTotal;
     private String status;
+    private String tipoEntrega;
+    private String formaPagamento; // 🌟 NOVO CAMPO
     private ClienteDTO cliente;      
     private List<ItemPedidoDTO> itens; 
 

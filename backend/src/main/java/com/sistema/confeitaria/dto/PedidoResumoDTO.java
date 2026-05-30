@@ -12,7 +12,8 @@ public class PedidoResumoDTO {
     private LocalDate dataEncomenda;
     private LocalTime horarioEncomenda;
     private BigDecimal valorTotal;
-    private String tipoEntrega; // 🌟 NOVO CAMPO NO DTO
+    private String tipoEntrega;
+    private String formaPagamento; // 🌟 NOVO CAMPO NO DTO
 
     public PedidoResumoDTO(Pedido pedido) {
         this.id = pedido.getId();
@@ -21,7 +22,8 @@ public class PedidoResumoDTO {
         this.dataEncomenda = pedido.getDataEncomenda();
         this.horarioEncomenda = pedido.getHorarioEncomenda();
         this.valorTotal = pedido.getValorTotal() != null ? BigDecimal.valueOf(pedido.getValorTotal()) : BigDecimal.ZERO;
-        this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA"; // 🌟 MAPEAMENTO DO NOVO CAMPO
+        this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA";
+        this.formaPagamento = pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX"; // 🌟 MAPEAMENTO DO NOVO CAMPO
     }
 
     // Getters e Setters
@@ -79,5 +81,13 @@ public class PedidoResumoDTO {
 
     public void setTipoEntrega(String tipoEntrega) {
         this.tipoEntrega = tipoEntrega;
+    }
+
+    public String getFormaPagamento() {
+        return formaPagamento;
+    }
+
+    public void setFormaPagamento(String formaPagamento) {
+        this.formaPagamento = formaPagamento;
     }
 }

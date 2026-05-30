@@ -1,53 +1,78 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface CartItem {
-  id: number; // 🌟 Mantido estritamente como número (zero conflitos com o Java)
+  id: number;
   nome: string;
   precoUnitario: number;
   quantidade: number;
-  sabor?: string | null; // 🌟 Sabor armazenado de forma independente
+  sabor?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private cartItems = new BehaviorSubject<CartItem[]>([]);
-  items$ = this.cartItems.asObservable();
 
-  totalItems$ = this.items$.pipe(map(items => items.reduce((acc, item) => acc + item.quantidade, 0)));
-  totalValue$ = this.items$.pipe(map(items => items.reduce((acc, item) => acc + (item.precoUnitario * item.quantidade), 0)));
+  public items$: Observable<CartItem[]> = this.cartItems.asObservable();
 
-  updateQuantity(id: number, nome: string, precoUnitario: number, change: number, sabor?: string | null) {
+  public totalItems$: Observable<number> = this.items$.pipe(
+    map((items: CartItem[]) => items.reduce((acc, item) => acc + item.quantidade, 0))
+  );
+
+  public totalValue$: Observable<number> = this.items$.pipe(
+    map((items: CartItem[]) => items.reduce((acc, item) => acc + (item.precoUnitario * item.quantidade), 0))
+  );
+
+  public updateQuantity(id: number, nome: string, precoUnitario: number, change: number, sabor?: string | null): void {
     const current = [...this.cartItems.value];
-    
-    // 🌟 Busca o item exato combinando o ID numérico E o Sabor selecionado
-    const index = current.findIndex(i => i.id === id && i.sabor === sabor);
+
+    const normalizedSabor = sabor || null;
+
+    //  Tipagem explícita (i: CartItem) adicionada
+    const index = current.findIndex((i: CartItem) => i.id === id && (i.sabor || null) === normalizedSabor);
 
     if (index > -1) {
       current[index].quantidade += change;
-      if (current[index].quantidade <= 0) current.splice(index, 1);
+      if (current[index].quantidade <= 0) {
+        current.splice(index, 1);
+      }
     } else if (change > 0) {
-      current.push({ id, nome, precoUnitario, quantidade: 1, sabor });
+      current.push({ id, nome, precoUnitario, quantidade: change, sabor: normalizedSabor });
     }
+
     this.cartItems.next(current);
   }
 
-  getItemQuantity(id: number, sabor?: string | null): number {
-    const item = this.cartItems.value.find(i => i.id === id && i.sabor === sabor);
+  public getItemQuantity(id: number, sabor?: string | null): number {
+    const normalizedSabor = sabor || null;
+
+    //  Tipagem explícita (i: CartItem) adicionada
+    const item = this.cartItems.value.find((i: CartItem) => i.id === id && (i.sabor || null) === normalizedSabor);
+
     return item ? item.quantidade : 0;
   }
 
-  adicionarItem(item: CartItem) {
-    this.updateQuantity(item.id, item.nome, item.precoUnitario, 1, item.sabor);
+  public adicionarItem(item: CartItem): void {
+    this.updateQuantity(item.id, item.nome, item.precoUnitario, item.quantidade, item.sabor);
   }
 
-  removerItem(id: number, sabor?: string | null) {
-    const item = this.cartItems.value.find(i => i.id === id && i.sabor === sabor);
+  public removerItem(id: number, sabor?: string | null, quantidadeParaRemover: number = 1): void {
+    const normalizedSabor = sabor || null;
+
+    //  Tipagem explícita (i: CartItem) adicionada
+    const item = this.cartItems.value.find((i: CartItem) => i.id === id && (i.sabor || null) === normalizedSabor);
+
     if (item && item.quantidade > 0) {
-      this.updateQuantity(id, item.nome, item.precoUnitario, -1, item.sabor);
+      this.updateQuantity(id, item.nome, item.precoUnitario, -quantidadeParaRemover, normalizedSabor);
     }
   }
 
-  getSnapshot() { return this.cartItems.value; }
-  clear() { this.cartItems.next([]); }
+  public getSnapshot(): CartItem[] {
+    return this.cartItems.value;
+  }
+
+  public clear(): void {
+    this.cartItems.next([]);
+  }
 }
