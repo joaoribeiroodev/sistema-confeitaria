@@ -160,8 +160,8 @@
               </div>
 
               <div class="md:col-span-4 space-y-1.5">
-                <label class="block text-xs font-bold text-orange-800/70 pl-1">Complemento / Ponto de Referência</label>
-                <input formControlName="complemento" type="text" placeholder="Apt, Bloco, Casa 2, próximo a..."
+                <label class="block text-xs font-bold text-orange-800/70 pl-1">Complemento / Ref.</label>
+                <input formControlName="complemento" type="text" placeholder="Apt, Bloco, próximo a..."
                   class="w-full p-3 bg-white border-2 rounded-xl focus:border-orange-400 shadow-sm outline-none transition-all text-sm"
                   [ngClass]="orderForm.get('complemento')?.touched && orderForm.get('complemento')?.invalid ? 'border-red-300 bg-red-50/50' : 'border-white'">
               </div>
@@ -227,11 +227,11 @@
         </div>
 
         <div class="flex space-x-3 overflow-x-auto pb-4 scrollbar-hide snap-x">
-          <button *ngFor="let cat of ['SALGADOS_FRITOS', 'SALGADOS_ASSADOS', 'DOCES_FINOS', 'DOCES_SIMPLES']"
+          <button *ngFor="let cat of ['SALGADOS_FRITOS', 'SALGADOS_ASSADOS', 'DOCES_FINOS', 'DOCES_SIMPLES', 'SALGADOS_CONGELADOS']"
             (click)="activeCategory = cat"
             class="snap-start px-6 py-3 rounded-2xl font-bold text-sm whitespace-nowrap transition-all duration-300 cursor-pointer"
             [ngClass]="activeCategory === cat ? 'bg-rose-500 text-white shadow-lg shadow-rose-200/50 -translate-y-1' : 'bg-white text-stone-500 hover:bg-stone-100 border border-stone-200'">
-            {{ cat.replace('_', ' ') }}
+            {{ cat === 'SALGADOS_CONGELADOS' ? '❄️ Congelados' : cat.replace('_', ' ') }}
           </button>
         </div>
 
