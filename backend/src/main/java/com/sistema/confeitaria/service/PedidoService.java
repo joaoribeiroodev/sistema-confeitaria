@@ -55,7 +55,7 @@ public class PedidoService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já foi reservado por outro cliente.");
         }
 
-        // 🌟 PASSO 2 APLICADO AQUI: Validação de Segurança no Backend para mínimo de 30 unidades POR ITEM
+        // Validação de Segurança no Backend para mínimo de 30 unidades POR ITEM
         if (pedido.getItens() != null) {
             for (ItemPedido item : pedido.getItens()) {
                 if (item.getQuantidade() < 30) {
@@ -124,7 +124,7 @@ public class PedidoService {
             fonteNormal.setFontName("Arial");
             fonteNormal.setFontHeightInPoints((short) 10);
             estiloBase.setFont(fonteNormal);
-            setBordasFinass(estiloBase);
+            setBordasFinas(estiloBase); // ✨ Corrigido o nome do método aqui
 
             CellStyle estiloData = workbook.createCellStyle();
             estiloData.cloneStyleFrom(estiloBase);
@@ -139,11 +139,6 @@ public class PedidoService {
             estiloMoeda.cloneStyleFrom(estiloBase);
             estiloMoeda.setDataFormat(workbook.createDataFormat().getFormat("R$ #,##0.00"));
             estiloMoeda.setAlignment(HorizontalAlignment.RIGHT);
-
-            CellStyle estiloMoedaZebra = workbook.createCellStyle();
-            estiloMoedaZebra.cloneStyleFrom(estiloMoeda);
-            estiloMoedaZebra.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-            estiloMoedaZebra.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
             String[] cabecalhos = {"ID Pedido", "Cliente", "WhatsApp", "Endereço Completo", "Data Encomenda", "Horário Encomenda", "Tipo Entrega", "Pagamento", "Status", "Valor Total"};
             Row rowCabecalho = sheet.createRow(0);
@@ -233,7 +228,8 @@ public class PedidoService {
         }
     }
 
-    private void setBordasFinass(CellStyle estilo) {
+    // ✨ Nome corrigido para o padrão correto do português
+    private void setBordasFinas(CellStyle estilo) {
         estilo.setBorderTop(BorderStyle.THIN);
         estilo.setBorderBottom(BorderStyle.THIN);
         estilo.setBorderLeft(BorderStyle.THIN);

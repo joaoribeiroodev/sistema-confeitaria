@@ -29,6 +29,12 @@ export class OrderComponent implements OnInit {
   avisoToast: string = '';
   avisoTimeout: any;
 
+  // 🌟 HORÁRIO CORRIGIDO: Adicionado o '07:00' no início da lista
+  horariosDisponiveis: string[] = [
+    '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+  ];
+
   produtos: any[] = [
     // Salgados fritos
     { id: 1, nome: 'Coxinha de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
@@ -202,6 +208,7 @@ export class OrderComponent implements OnInit {
     }
   }
 
+  // 🌟 CORRIGIDO: Atribuição trocada de 'message' para 'mensagem' para sanar o erro de compilação
   mostrarAviso(mensagem: string): void {
     this.avisoToast = mensagem;
     if (this.avisoTimeout) clearTimeout(this.avisoTimeout);
@@ -219,7 +226,7 @@ export class OrderComponent implements OnInit {
     let qtdToAdd = 1;
 
     if (currentQty === 0) {
-      qtdToAdd = 30; // 🌟 Como arrumamos o serviço, agora podemos enviar 30 direto na propriedade!
+      qtdToAdd = 30;
       this.mostrarAviso('O pedido mínimo por item é 30 unidades. Já preenchemos para você! ✨');
     }
 
@@ -240,7 +247,6 @@ export class OrderComponent implements OnInit {
     const currentQty = this.getQuantidade(prod);
 
     if (currentQty <= 30 && currentQty > 0) {
-      // 🌟 Como arrumamos o serviço, passamos a quantidade exata para zerar em uma só chamada!
       this.cartService.removerItem(prod.id, sabor, currentQty);
       this.mostrarAviso('Item removido. A quantidade não pode ser menor que o mínimo de 30 unidades. 🗑️');
     } else {
