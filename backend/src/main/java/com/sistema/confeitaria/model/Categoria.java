@@ -4,5 +4,6 @@ public enum Categoria {
     SALGADOS_FRITOS,
     SALGADOS_ASSADOS,
     DOCES_FINOS,
-    DOCES_SIMPLES
-}   
+    DOCES_SIMPLES,
+    SALGADOS_CONGELADOS 
+}

@@ -29,7 +29,6 @@ export class OrderComponent implements OnInit {
   avisoToast: string = '';
   avisoTimeout: any;
 
-  // 🌟 HORÁRIO CORRIGIDO: Adicionado o '07:00' no início da lista
   horariosDisponiveis: string[] = [
     '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
     '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
@@ -43,7 +42,6 @@ export class OrderComponent implements OnInit {
     { id: 4, nome: 'Risole', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 5, nome: 'Bolinho misto (queijo e presunto)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
     { id: 6, nome: 'Pastel frito', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
-    { id: 7, nome: 'Salgados Congelados (todos)', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS' },
 
     // Salgados assados
     { id: 8, nome: 'Empada de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
@@ -69,7 +67,15 @@ export class OrderComponent implements OnInit {
     { id: 24, nome: 'Beijinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
     { id: 25, nome: 'Pastel doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
     { id: 26, nome: 'Empadinha doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
-    { id: 27, nome: 'Brigadeiro de leite ninho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' }
+    { id: 27, nome: 'Brigadeiro de leite ninho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+
+    // Salgados Congelados
+    { id: 28, nome: 'Coxinha de Frango (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 29, nome: 'Quibe (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 30, nome: 'Boliviano (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 31, nome: 'Risole (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 32, nome: 'Bolinho misto (queijo e presunto) (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 33, nome: 'Pastel de Forno/Frito (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO }
   ];
 
   constructor(
@@ -208,8 +214,8 @@ export class OrderComponent implements OnInit {
     }
   }
 
-  // 🌟 CORRIGIDO: Atribuição trocada de 'message' para 'mensagem' para sanar o erro de compilação
   mostrarAviso(mensagem: string): void {
+    this.avisoToast = mensagem;
     this.avisoToast = mensagem;
     if (this.avisoTimeout) clearTimeout(this.avisoTimeout);
     this.avisoTimeout = setTimeout(() => {

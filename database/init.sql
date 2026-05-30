@@ -9,12 +9,12 @@ CREATE TABLE IF NOT EXISTS clientes (
     endereco TEXT NOT NULL
 );
 
--- 2. Tabela de Produtos
+-- 2. Tabela de Produtos 
 CREATE TABLE IF NOT EXISTS produtos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     preco_unitario DECIMAL(10,2) NOT NULL,
-    categoria ENUM('SALGADOS_FRITOS', 'SALGADOS_ASSADOS', 'DOCES_FINOS', 'DOCES_SIMPLES') NOT NULL
+    categoria ENUM('SALGADOS_FRITOS', 'SALGADOS_ASSADOS', 'DOCES_FINOS', 'DOCES_SIMPLES', 'SALGADOS_CONGELADOS') NOT NULL
 );
 
 -- 3. Tabela de Pedidos

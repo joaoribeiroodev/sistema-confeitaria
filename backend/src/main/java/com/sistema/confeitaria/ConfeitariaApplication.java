@@ -30,7 +30,6 @@ public class ConfeitariaApplication {
                     criarProduto("Risole", 1.80, Categoria.SALGADOS_FRITOS),
                     criarProduto("Bolinho misto(queijo e presunto)", 1.80, Categoria.SALGADOS_FRITOS),
                     criarProduto("Pastel frito", 1.80, Categoria.SALGADOS_FRITOS),
-                    criarProduto("Salgados Congelados(todos)", 1.80, Categoria.SALGADOS_FRITOS),
                     
                     // salgados assados
                     criarProduto("Empada de Frango", 1.80, Categoria.SALGADOS_ASSADOS),
@@ -56,7 +55,15 @@ public class ConfeitariaApplication {
                     criarProduto("Beijinho", 1.80, Categoria.DOCES_SIMPLES),
                     criarProduto("Pastel doce", 1.80, Categoria.DOCES_SIMPLES),
                     criarProduto("Empadinha doce", 1.80, Categoria.DOCES_SIMPLES),
-                    criarProduto("Brigadeiro de leite ninho", 1.80, Categoria.DOCES_SIMPLES)
+                    criarProduto("Brigadeiro de leite ninho", 1.80, Categoria.DOCES_SIMPLES),
+
+                    // salgados congelados
+                    criarProduto("Coxinha de Frango (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Quibe (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Boliviano (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Risole (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Bolinho misto (queijo e presunto) (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS),
+                    criarProduto("Pastel de Forno/Frito (Congelado)", 1.80, Categoria.SALGADOS_CONGELADOS)
                 );
 
                 repository.saveAll(produtos);
@@ -64,7 +71,6 @@ public class ConfeitariaApplication {
         };
     }
 
-    // Método auxiliar para não repetir os "setters" 27 vezes
     private Produto criarProduto(String nome, double preco, Categoria categoria) {
         Produto p = new Produto();
         p.setNome(nome);
