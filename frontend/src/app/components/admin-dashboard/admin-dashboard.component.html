@@ -69,7 +69,9 @@
                 <th class="p-4 pl-6">Cliente</th>
                 <th class="p-4">Data/Hora Encomenda</th>
                 <th class="p-4">Endereço unificado</th>
-                <th class="p-4">Pagamento</th> <th class="p-4 pr-6 text-right">Total</th>
+                <th class="p-4">Pagamento</th>
+                <th class="p-4">Status</th>
+                <th class="p-4 pr-6 text-right">Total</th>
               </tr>
             </thead>
             <tbody class="text-sm divide-y divide-stone-100 text-stone-600">
@@ -77,10 +79,23 @@
                 <td class="p-4 pl-6 font-bold text-stone-800">{{ pedido.nomeCliente || '-' }}</td>
                 <td class="p-4">{{ pedido.dataEncomenda | date:'dd/MM/yyyy' }} às {{ pedido.horarioEncomenda || '00:00' }}</td>
                 <td class="p-4 text-xs max-w-xs truncate" [title]="pedido.enderecoCliente">{{ pedido.enderecoCliente || '-' }}</td>
-                <td class="p-4 font-bold" [ngClass]="{'text-emerald-600': pedido.formaPagamento === 'DINHEIRO', 'text-orange-500': pedido.formaPagamento === 'PIX'}">{{ pedido.formaPagamento || 'PIX' }}</td> <td class="p-4 pr-6 text-right font-black text-stone-900">R$ {{ pedido.valorTotal?.toFixed(2) || '0.00' }}</td>
+                <td class="p-4 font-bold" [ngClass]="{'text-emerald-600': pedido.formaPagamento === 'DINHEIRO', 'text-orange-500': pedido.formaPagamento === 'PIX'}">{{ pedido.formaPagamento || 'PIX' }}</td>
+
+                <td class="p-4">
+                  <span class="text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap"
+                        [ngClass]="{
+                          'bg-emerald-50 text-emerald-600': pedido.status === 'ENTREGUE',
+                          'bg-rose-50 text-rose-600': pedido.status === 'CANCELADO',
+                          'bg-amber-50 text-amber-600': pedido.status === 'PENDENTE' || !pedido.status
+                        }">
+                    {{ pedido.status || 'PENDENTE' }}
+                  </span>
+                </td>
+
+                <td class="p-4 pr-6 text-right font-black text-stone-900">R$ {{ pedido.valorTotal?.toFixed(2) || '0.00' }}</td>
               </tr>
               <tr *ngIf="!pedidos || pedidos.length === 0">
-                <td colspan="5" class="p-8 text-center text-stone-400 font-medium">Nenhum pedido encontrado.</td>
+                <td colspan="6" class="p-8 text-center text-stone-400 font-medium">Nenhum pedido encontrado.</td>
               </tr>
             </tbody>
           </table>

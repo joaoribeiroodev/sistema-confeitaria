@@ -101,7 +101,10 @@ export class AdminDashboardComponent implements OnInit {
   darBaixaPedido(id: number) {
     if (confirm('Confirmar entrega e dar BAIXA neste pedido?')) {
       this.adminService.atualizarStatusPedido(id, 'ENTREGUE').subscribe({
-        next: () => this.carregarPedidosParaAcompanhamento(),
+        next: () => {
+          this.carregarPedidosParaAcompanhamento();
+          this.carregarDados(); // Atualiza a tabela da Visão Geral e as métricas
+        },
         error: () => alert('Erro ao atualizar status.')
       });
     }
@@ -110,7 +113,10 @@ export class AdminDashboardComponent implements OnInit {
   cancelarPedido(id: number) {
     if (confirm('Tem certeza absoluta que deseja CANCELAR este pedido?')) {
       this.adminService.atualizarStatusPedido(id, 'CANCELADO').subscribe({
-        next: () => this.carregarPedidosParaAcompanhamento(),
+        next: () => {
+          this.carregarPedidosParaAcompanhamento();
+          this.carregarDados(); // Atualiza a tabela da Visão Geral e as métricas
+        },
         error: () => alert('Erro ao cancelar o pedido.')
       });
     }

@@ -13,7 +13,8 @@ public class PedidoResumoDTO {
     private LocalTime horarioEncomenda;
     private BigDecimal valorTotal;
     private String tipoEntrega;
-    private String formaPagamento; // 🌟 NOVO CAMPO NO DTO
+    private String formaPagamento;
+    private String status; // 🌟 NOVO CAMPO DE STATUS ADICIONADO AQUI
 
     public PedidoResumoDTO(Pedido pedido) {
         this.id = pedido.getId();
@@ -23,7 +24,10 @@ public class PedidoResumoDTO {
         this.horarioEncomenda = pedido.getHorarioEncomenda();
         this.valorTotal = pedido.getValorTotal() != null ? BigDecimal.valueOf(pedido.getValorTotal()) : BigDecimal.ZERO;
         this.tipoEntrega = pedido.getTipoEntrega() != null ? pedido.getTipoEntrega() : "ENTREGA";
-        this.formaPagamento = pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX"; // 🌟 MAPEAMENTO DO NOVO CAMPO
+        this.formaPagamento = pedido.getFormaPagamento() != null ? pedido.getFormaPagamento() : "PIX";
+        
+        // 🌟 MAPEAMENTO DO NOVO CAMPO (Se for null, assume PENDENTE por precaução)
+        this.status = pedido.getStatus() != null ? pedido.getStatus() : "PENDENTE"; 
     }
 
     // Getters e Setters
@@ -89,5 +93,14 @@ public class PedidoResumoDTO {
 
     public void setFormaPagamento(String formaPagamento) {
         this.formaPagamento = formaPagamento;
+    }
+
+    // 🌟 GETTER E SETTER DO STATUS
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

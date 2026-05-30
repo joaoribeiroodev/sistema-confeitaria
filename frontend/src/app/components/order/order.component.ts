@@ -44,38 +44,38 @@ export class OrderComponent implements OnInit {
     { id: 6, nome: 'Pastel frito', precoUnitario: 1.80, categoria: 'SALGADOS_FRITOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
 
     // Salgados assados
-    { id: 8, nome: 'Empada de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 9, nome: 'Barquete', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 10, nome: 'Saltenha', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 11, nome: 'Empada', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 12, nome: 'Pastel de Forno', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
-    { id: 13, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 14, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, font_weight: 'bold', categoria: 'SALGADOS_ASSADOS' },
+    { id: 7, nome: 'Empada de Frango', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 8, nome: 'Barquete', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 9, nome: 'Saltenha', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 10, nome: 'Empada', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 11, nome: 'Pastel de Forno', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 12, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
+    { id: 13, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, font_weight: 'bold', categoria: 'SALGADOS_ASSADOS' },
 
     // Doces finos
-    { id: 15, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-    { id: 16, nome: 'Limão', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-    { id: 17, nome: 'Maracujá', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-    { id: 18, nome: 'Amendoim', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-    { id: 19, nome: 'Nozes', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-    { id: 20, nome: 'Damasco', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
-    { id: 21, nome: 'Prestígio', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 14, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 15, nome: 'Limão', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 16, nome: 'Maracujá', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 17, nome: 'Amendoim', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 18, nome: 'Nozes', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 19, nome: 'Damasco', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
+    { id: 20, nome: 'Prestígio', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
 
     // Doces simples
-    { id: 22, nome: 'Brigadeiro', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
-    { id: 23, nome: 'Casadinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
-    { id: 24, nome: 'Beijinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
-    { id: 25, nome: 'Pastel doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
-    { id: 26, nome: 'Empadinha doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
-    { id: 27, nome: 'Brigadeiro de leite ninho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 21, nome: 'Brigadeiro', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 22, nome: 'Casadinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 23, nome: 'Beijinho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 24, nome: 'Pastel doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 25, nome: 'Empadinha doce', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
+    { id: 26, nome: 'Brigadeiro de leite ninho', precoUnitario: 1.80, categoria: 'DOCES_SIMPLES' },
 
     // Salgados Congelados
-    { id: 28, nome: 'Coxinha de Frango (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 29, nome: 'Quibe (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 30, nome: 'Boliviano (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
-    { id: 31, nome: 'Risole (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 32, nome: 'Bolinho misto (queijo e presunto) (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
-    { id: 33, nome: 'Pastel de Forno/Frito (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO }
+    { id: 27, nome: 'Coxinha de Frango (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 28, nome: 'Quibe (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 29, nome: 'Boliviano (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
+    { id: 30, nome: 'Risole (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 31, nome: 'Bolinho misto (queijo e presunto) (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS' },
+    { id: 32, nome: 'Pastel de Forno/Frito (Congelado)', precoUnitario: 1.80, categoria: 'SALGADOS_CONGELADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO }
   ];
 
   constructor(
