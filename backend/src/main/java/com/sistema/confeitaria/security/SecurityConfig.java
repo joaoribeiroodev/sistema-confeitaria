@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                     .requestMatchers(
                         "/api/auth/**",
+                        "/api/ping",
                         "/api/pedidos",
                         "/api/pedidos/validar-data",
                         "/api/pedidos/validar-horario",
