@@ -1,13 +1,14 @@
+package com.sistema.confeitaria.controller;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestController
+@RestController
 @RequestMapping("/api")
-pulic class PingController {
+public class PingController {
 
-    // Endpoint para fazer o sistema ficar acordado no render
     @GetMapping("/ping")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");
