@@ -95,7 +95,6 @@ public class PedidoResumoDTO {
         this.formaPagamento = formaPagamento;
     }
 
-    // 🌟 GETTER E SETTER DO STATUS
     public String getStatus() {
         return status;
     }
