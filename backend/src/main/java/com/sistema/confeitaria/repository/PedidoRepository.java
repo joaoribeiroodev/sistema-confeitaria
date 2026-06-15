@@ -14,6 +14,14 @@ import java.util.List;
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
     long countByDataEncomenda(LocalDate dataEncomenda);
 
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(p) FROM Pedido p WHERE p.dataEncomenda = :data AND p.status <> 'CANCELADO'")
+    long countAtivosByDataEncomenda(@org.springframework.data.repository.query.Param("data") LocalDate data);
+
+    @org.springframework.data.jpa.repository.Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Pedido p WHERE p.dataEncomenda = :data AND p.horarioEncomenda = :horario AND p.status <> 'CANCELADO'")
+    boolean existsAtivoByDataEncomendaAndHorarioEncomenda(
+            @org.springframework.data.repository.query.Param("data") LocalDate data,
+            @org.springframework.data.repository.query.Param("horario") LocalTime horario);
+
     // 1. Método automático do Spring para buscar pedidos entre duas datas
     List<Pedido> findByDataEncomendaBetween(LocalDate inicio, LocalDate fim);
 

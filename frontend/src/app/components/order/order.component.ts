@@ -22,6 +22,7 @@ export class OrderComponent implements OnInit {
   buscandoCep: boolean = false;
   whatsappUrlFallback: string = '';
   horarioOcupado: boolean = false;
+  carregandoHorarios: boolean = false;
 
   tipoEntrega: 'ENTREGA' | 'RETIRADA' = 'ENTREGA';
   formaPagamento: 'PIX' | 'DINHEIRO' = 'PIX';
@@ -29,10 +30,7 @@ export class OrderComponent implements OnInit {
   avisoToast: string = '';
   avisoTimeout: any;
 
-  horariosDisponiveis: string[] = [
-    '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
-  ];
+  horariosDisponiveis: string[] = [];
 
   produtos: any[] = [
     // Salgados fritos
@@ -106,15 +104,36 @@ export class OrderComponent implements OnInit {
     this.setTipoEntrega(this.tipoEntrega);
 
     this.orderForm.get('data')?.valueChanges.subscribe((data: any) => {
+      this.orderForm.patchValue({ horario: '' }, { emitEvent: false });
+      this.horariosDisponiveis = [];
+
       if (data) {
         this.apiService.validarData(data).subscribe({
           next: (disponivel: any) => {
             this.agendaLotada = !Boolean(disponivel);
+            if (disponivel) {
+              this.carregarHorariosDisponiveis(data);
+            }
           },
           error: () => {
             this.agendaLotada = false;
           }
         });
+      }
+    });
+  }
+
+  private carregarHorariosDisponiveis(data: string): void {
+    this.carregandoHorarios = true;
+    this.apiService.getSlotsDisponiveis(data).subscribe({
+      next: (slots: string[]) => {
+        this.horariosDisponiveis = slots || [];
+        this.carregandoHorarios = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.horariosDisponiveis = [];
+        this.carregandoHorarios = false;
       }
     });
   }

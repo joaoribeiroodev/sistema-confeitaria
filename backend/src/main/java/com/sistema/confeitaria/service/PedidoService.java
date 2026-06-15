@@ -8,7 +8,6 @@ import com.sistema.confeitaria.repository.PedidoRepository;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,20 +28,19 @@ import java.util.stream.Collectors;
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
-    private final int limiteDiario;
+    private final AgendaService agendaService;
 
-    public PedidoService(PedidoRepository pedidoRepository, 
-                         @Value("${confeitaria.limite-pedidos-diario}") int limiteDiario) {
+    public PedidoService(PedidoRepository pedidoRepository, AgendaService agendaService) {
         this.pedidoRepository = pedidoRepository;
-        this.limiteDiario = limiteDiario;
+        this.agendaService = agendaService;
     }
 
     public boolean verificarDisponibilidade(LocalDate data) {
-        return pedidoRepository.countByDataEncomenda(data) < limiteDiario;
+        return agendaService.isDataDisponivel(data);
     }
 
     public boolean verificarHorarioDisponivel(LocalDate data, LocalTime horario) {
-        return !pedidoRepository.existsByDataEncomendaAndHorarioEncomenda(data, horario);
+        return agendaService.isHorarioDisponivel(data, horario);
     }
 
     @Transactional

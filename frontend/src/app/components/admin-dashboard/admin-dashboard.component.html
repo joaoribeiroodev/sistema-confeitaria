@@ -31,6 +31,9 @@
       <button (click)="mudarAbaPrincipal('acompanhamento')" [class]="activeTab === 'acompanhamento' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
         🛍️ Fila de Pedidos Realizados
       </button>
+      <button (click)="mudarAbaPrincipal('agenda')" [class]="activeTab === 'agenda' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
+        📅 Gestão de Agenda
+      </button>
     </div>
 
     <div *ngIf="activeTab === 'principal'" class="animate-fade-in">
@@ -176,6 +179,72 @@
       <div *ngIf="pedidosFiltrados.length === 0" class="bg-white p-12 text-center rounded-[2rem] border border-stone-100 text-stone-400 font-medium italic shadow-sm mt-4">
         Nenhum pedido encontrado nesta categoria de filtro.
       </div>
+    </div>
+
+    <div *ngIf="activeTab === 'agenda'" class="animate-fade-in">
+      <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-stone-800">Controle de Disponibilidade</h3>
+            <p class="text-sm text-stone-500 mt-1">Clique em um horário para ativar ou desativar. Horários com pedido não podem ser alterados.</p>
+          </div>
+          <div class="flex items-center bg-stone-50 border border-stone-200 rounded-2xl px-4 py-2 shadow-sm">
+            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider mr-2">Data:</span>
+            <input type="date" [(ngModel)]="dataAgenda" (change)="carregarAgendaDia()" class="text-sm font-bold text-stone-700 bg-transparent outline-none cursor-pointer border-none p-1">
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="carregandoAgenda" class="bg-white p-12 text-center rounded-[2rem] border border-stone-100 text-stone-400 font-medium">
+        Carregando agenda...
+      </div>
+
+      <ng-container *ngIf="!carregandoAgenda && agendaDia">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm">
+            <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Pedidos no dia</p>
+            <h3 class="text-2xl font-black text-stone-800 mt-1">{{ agendaDia.pedidosAtivos }} / {{ agendaDia.limiteDiario }}</h3>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm">
+            <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Status do dia</p>
+            <h3 class="text-lg font-black mt-1" [ngClass]="agendaDia.diaBloqueado ? 'text-rose-600' : (agendaDia.diaLotado ? 'text-amber-600' : 'text-emerald-600')">
+              {{ agendaDia.diaBloqueado ? 'Desativado' : (agendaDia.diaLotado ? 'Lotado' : 'Ativo') }}
+            </h3>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Dia inteiro</p>
+              <p class="text-sm text-stone-500 mt-1">{{ agendaDia.diaBloqueado ? 'Clique para reativar' : 'Clique para desativar' }}</p>
+            </div>
+            <button (click)="alternarDiaInteiro()"
+              [class]="agendaDia.diaBloqueado ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-rose-500 hover:bg-rose-600 text-white'"
+              class="font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm cursor-pointer transition-all">
+              {{ agendaDia.diaBloqueado ? '✓ Ativar dia' : '✕ Desativar dia' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm">
+          <h4 class="text-sm font-bold text-stone-400 uppercase tracking-wider mb-4">Horários (07:00 – 18:00)</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <button *ngFor="let slot of agendaDia.horarios"
+              (click)="alternarHorario(slot)"
+              [disabled]="slot.status === 'OCUPADO' || slot.status === 'LOTADO' || agendaDia.diaBloqueado"
+              [class]="getClasseSlot(slot.status)"
+              class="p-4 rounded-2xl border-2 font-bold text-sm transition-all flex flex-col items-center gap-1 cursor-pointer disabled:cursor-not-allowed">
+              <span class="text-base">{{ formatarHorario(slot.horario) }}</span>
+              <span class="text-[10px] uppercase tracking-wider opacity-80">{{ getLabelSlot(slot.status) }}</span>
+            </button>
+          </div>
+
+          <div class="flex flex-wrap gap-4 mt-6 pt-4 border-t border-stone-100 text-xs font-bold text-stone-500">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400"></span> Disponível</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-400"></span> Desativado</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Com pedido</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-stone-300"></span> Dia lotado</span>
+          </div>
+        </div>
+      </ng-container>
     </div>
 
   </div>

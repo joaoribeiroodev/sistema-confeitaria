@@ -37,4 +37,24 @@ export class AdminService {
   atualizarStatusPedido(id: number, status: string): Observable<any> {
     return this.http.put(`${this.pedidosUrl}/${id}/status?status=${status}`, {});
   }
+
+  getAgendaDia(data: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/agenda?data=${data}`);
+  }
+
+  bloquearAgenda(data: string, horario?: string, motivo?: string): Observable<any> {
+    const body: any = { data, motivo: motivo || null };
+    if (horario) {
+      body.horario = horario.length === 5 ? `${horario}:00` : horario;
+    }
+    return this.http.post(`${this.apiUrl}/agenda/bloquear`, body);
+  }
+
+  desbloquearAgenda(data: string, horario?: string): Observable<any> {
+    const body: any = { data };
+    if (horario) {
+      body.horario = horario.length === 5 ? `${horario}:00` : horario;
+    }
+    return this.http.post(`${this.apiUrl}/agenda/desbloquear`, body);
+  }
 }

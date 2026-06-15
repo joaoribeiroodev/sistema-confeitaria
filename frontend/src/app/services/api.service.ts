@@ -33,4 +33,8 @@ export class ApiService {
     const horarioFormatado = horario.includes(':00') ? horario : `${horario}:00`;
     return this.http.get<boolean>(`${this.baseUrl}/verificar-horario?data=${data}&horario=${horarioFormatado}`);
   }
+
+  getSlotsDisponiveis(data: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/slots-disponiveis?data=${data}`);
+  }
 }
