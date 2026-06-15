@@ -40,6 +40,7 @@ public class SecurityConfig {
                         "/api/pedidos/validar-data",
                         "/api/pedidos/validar-horario",
                         "/api/pedidos/verificar-horario",
+                        "/api/pedidos/slots-disponiveis",
                         "/error",
                         "/v3/api-docs/**",
                         "/swagger-ui/**",

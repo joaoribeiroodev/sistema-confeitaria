@@ -8,7 +8,6 @@ import com.sistema.confeitaria.repository.PedidoRepository;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -29,32 +28,19 @@ import java.util.stream.Collectors;
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
-    private final int limiteDiario;
+    private final AgendaService agendaService;
 
-    public PedidoService(PedidoRepository pedidoRepository, 
-                         @Value("${confeitaria.limite-pedidos-diario}") int limiteDiario) {
+    public PedidoService(PedidoRepository pedidoRepository, AgendaService agendaService) {
         this.pedidoRepository = pedidoRepository;
-        this.limiteDiario = limiteDiario;
+        this.agendaService = agendaService;
     }
 
     public boolean verificarDisponibilidade(LocalDate data) {
-        return pedidoRepository.countByDataEncomenda(data) < limiteDiario;
+        return agendaService.isDataDisponivel(data);
     }
 
     public boolean verificarHorarioDisponivel(LocalDate data, LocalTime horario) {
-        return !pedidoRepository.existsByDataEncomendaAndHorarioEncomenda(data, horario);
-    }
-
-    // 🌟 NOVO MÉTODO: Verifica se o horário está dentro do expediente (07:00 às 18:00)
-    public boolean verificarHorarioFuncionamento(LocalTime horario) {
-        if (horario == null) {
-            return false;
-        }
-        LocalTime abertura = LocalTime.of(7, 0);
-        LocalTime fecho = LocalTime.of(18, 0);
-        
-        // Retorna true se NÃO for antes das 07:00 e NÃO for depois das 18:00
-        return !horario.isBefore(abertura) && !horario.isAfter(fecho);
+        return agendaService.isHorarioDisponivel(data, horario);
     }
 
     @Transactional
@@ -63,15 +49,7 @@ public class PedidoService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Agenda lotada para este dia!");
         }
 
-        // 🌟 NOVA VALIDAÇÃO APLICADA AQUI: Bloqueia horários fora do expediente
-        if (!verificarHorarioFuncionamento(pedido.getHorarioEncomenda())) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, 
-                "Horário inválido! As encomendas devem ser agendadas entre as 07:00 e as 18:00."
-            );
-        }
-
-        if (!verificarHorarioDisponivel(pedido.getHorarioEncomenda() != null ? pedido.getDataEncomenda() : null, pedido.getHorarioEncomenda())) {
+        if (!verificarHorarioDisponivel(pedido.getDataEncomenda(), pedido.getHorarioEncomenda())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Este horário já foi reservado por outro cliente.");
         }
 
@@ -144,7 +122,7 @@ public class PedidoService {
             fonteNormal.setFontName("Arial");
             fonteNormal.setFontHeightInPoints((short) 10);
             estiloBase.setFont(fonteNormal);
-            setBordasFinas(estiloBase);
+            setBordasFinas(estiloBase); // ✨ Corrigido o nome do método aqui
 
             CellStyle estiloData = workbook.createCellStyle();
             estiloData.cloneStyleFrom(estiloBase);
@@ -248,6 +226,7 @@ public class PedidoService {
         }
     }
 
+    // ✨ Nome corrigido para o padrão correto do português
     private void setBordasFinas(CellStyle estilo) {
         estilo.setBorderTop(BorderStyle.THIN);
         estilo.setBorderBottom(BorderStyle.THIN);

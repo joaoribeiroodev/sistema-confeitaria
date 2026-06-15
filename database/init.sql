@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS clientes (
     endereco TEXT NOT NULL
 );
 
--- 2. Tabela de Produtos
+-- 2. Tabela de Produtos 
 CREATE TABLE IF NOT EXISTS produtos (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -41,4 +41,14 @@ CREATE TABLE IF NOT EXISTS itens_pedido (
     sabor VARCHAR(50) DEFAULT NULL,
     FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
     FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+-- 5. Tabela de Bloqueios da Agenda (dias ou horários desativados pelo admin)
+CREATE TABLE IF NOT EXISTS agenda_bloqueios (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    data DATE NOT NULL,
+    horario TIME NULL,
+    motivo VARCHAR(255) DEFAULT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

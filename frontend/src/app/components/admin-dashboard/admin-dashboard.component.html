@@ -11,49 +11,64 @@
 
         <div class="flex items-center bg-white border border-stone-200 rounded-2xl px-3 py-1.5 shadow-sm">
           <span class="text-xs font-bold text-stone-400 uppercase tracking-wider mr-2">Mês:</span>
-          <input type="month" [(ngModel)]="mesFiltro" class="text-sm font-bold text-stone-700 bg-transparent outline-none cursor-pointer border-none p-1">
+          <input type="month" [(ngModel)]="mesFiltro"
+            class="text-sm font-bold text-stone-700 bg-transparent outline-none cursor-pointer border-none p-1">
         </div>
 
-        <button (click)="exportarPlanilhaExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-2xl shadow-sm text-sm transition-all flex items-center gap-2 cursor-pointer justify-center whitespace-nowrap">
+        <button (click)="exportarPlanilhaExcel()"
+          class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-2xl shadow-sm text-sm transition-all flex items-center gap-2 cursor-pointer justify-center whitespace-nowrap">
           📊 Exportar Planilha (.XLSX)
         </button>
 
-        <button (click)="logout()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold px-5 py-3 rounded-2xl text-sm transition-all cursor-pointer whitespace-nowrap">
+        <button (click)="logout()"
+          class="bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold px-5 py-3 rounded-2xl text-sm transition-all cursor-pointer whitespace-nowrap">
           Sair
         </button>
       </div>
     </div>
 
     <div class="flex gap-4 border-b border-stone-200 mb-8 pb-px">
-      <button (click)="mudarAbaPrincipal('principal')" [class]="activeTab === 'principal' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
+      <button (click)="mudarAbaPrincipal('principal')"
+        [class]="activeTab === 'principal' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
         📊 Visão Geral & Estatísticas
       </button>
-      <button (click)="mudarAbaPrincipal('acompanhamento')" [class]="activeTab === 'acompanhamento' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
+      <button (click)="mudarAbaPrincipal('acompanhamento')"
+        [class]="activeTab === 'acompanhamento' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
         🛍️ Fila de Pedidos Realizados
+      </button>
+      <button (click)="mudarAbaPrincipal('agenda')"
+        [class]="activeTab === 'agenda' ? 'border-b-4 border-rose-500 text-rose-600 font-black pb-3 text-base transition-all cursor-pointer' : 'text-stone-400 font-bold pb-3 text-base hover:text-stone-600 transition-all cursor-pointer'">
+        📅 Gestão de Agenda
       </button>
     </div>
 
     <div *ngIf="activeTab === 'principal'" class="animate-fade-in">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 bg-emerald-50 text-emerald-500 text-2xl rounded-2xl flex items-center justify-center">💰</div>
+          <div class="w-12 h-12 bg-emerald-50 text-emerald-500 text-2xl rounded-2xl flex items-center justify-center">💰
+          </div>
           <div>
             <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Faturamento Mensal</p>
-            <h3 class="text-2xl font-black text-stone-800">R$ {{ metricas?.faturamentoMensal?.toFixed(2) || '0.00' }}</h3>
+            <h3 class="text-2xl font-black text-stone-800">R$ {{ metricas?.faturamentoMensal?.toFixed(2) || '0.00' }}
+            </h3>
           </div>
         </div>
         <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 bg-indigo-50 text-indigo-500 text-2xl rounded-2xl flex items-center justify-center">🔥</div>
+          <div class="w-12 h-12 bg-indigo-50 text-indigo-500 text-2xl rounded-2xl flex items-center justify-center">🔥
+          </div>
           <div>
             <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Maior Pico de Venda</p>
-            <h3 class="text-lg font-black text-stone-800">{{ (metricas?.picosVenda?.[0]?.data | date:'dd/MM') || 'Sem dados' }} <span class="text-stone-400 font-normal">({{ metricas?.picosVenda?.[0]?.vendas || 0 }} pedidos)</span></h3>
+            <h3 class="text-lg font-black text-stone-800">{{ (metricas?.picosVenda?.[0]?.data | date:'dd/MM') || 'Sem
+              dados' }} <span class="text-stone-400 font-normal">({{ metricas?.picosVenda?.[0]?.vendas || 0 }}
+                pedidos)</span></h3>
           </div>
         </div>
         <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex items-center gap-4">
           <div class="w-12 h-12 bg-rose-50 text-rose-500 text-2xl rounded-2xl flex items-center justify-center">🏆</div>
           <div>
             <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Mais Vendido</p>
-            <h3 class="text-lg font-black text-stone-800 truncate max-w-[200px]">{{ metricas?.produtosMaisVendidos?.[0]?.nome || 'Nenhum' }}</h3>
+            <h3 class="text-lg font-black text-stone-800 truncate max-w-[200px]">{{
+              metricas?.produtosMaisVendidos?.[0]?.nome || 'Nenhum' }}</h3>
           </div>
         </div>
       </div>
@@ -77,13 +92,18 @@
             <tbody class="text-sm divide-y divide-stone-100 text-stone-600">
               <tr *ngFor="let pedido of pedidos" class="hover:bg-stone-50/40 transition-colors">
                 <td class="p-4 pl-6 font-bold text-stone-800">{{ pedido.nomeCliente || '-' }}</td>
-                <td class="p-4">{{ pedido.dataEncomenda | date:'dd/MM/yyyy' }} às {{ pedido.horarioEncomenda || '00:00' }}</td>
-                <td class="p-4 text-xs max-w-xs truncate" [title]="pedido.enderecoCliente">{{ pedido.enderecoCliente || '-' }}</td>
-                <td class="p-4 font-bold" [ngClass]="{'text-emerald-600': pedido.formaPagamento === 'DINHEIRO', 'text-orange-500': pedido.formaPagamento === 'PIX'}">{{ pedido.formaPagamento || 'PIX' }}</td>
+                <td class="p-4">{{ pedido.dataEncomenda | date:'dd/MM/yyyy' }} às {{ pedido.horarioEncomenda || '00:00'
+                  }}</td>
+                <td class="p-4 text-xs max-w-xs truncate" [title]="pedido.enderecoCliente">{{ pedido.enderecoCliente ||
+                  '-' }}</td>
+                <td class="p-4 font-bold"
+                  [ngClass]="{'text-emerald-600': pedido.formaPagamento === 'DINHEIRO', 'text-orange-500': pedido.formaPagamento === 'PIX'}">
+                  {{ pedido.formaPagamento || 'PIX' }}</td>
 
                 <td class="p-4">
-                  <span class="text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap"
-                        [ngClass]="{
+                  <span
+                    class="text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap"
+                    [ngClass]="{
                           'bg-emerald-50 text-emerald-600': pedido.status === 'ENTREGUE',
                           'bg-rose-50 text-rose-600': pedido.status === 'CANCELADO',
                           'bg-amber-50 text-amber-600': pedido.status === 'PENDENTE' || !pedido.status
@@ -92,7 +112,8 @@
                   </span>
                 </td>
 
-                <td class="p-4 pr-6 text-right font-black text-stone-900">R$ {{ pedido.valorTotal?.toFixed(2) || '0.00' }}</td>
+                <td class="p-4 pr-6 text-right font-black text-stone-900">R$ {{ pedido.valorTotal?.toFixed(2) || '0.00'
+                  }}</td>
               </tr>
               <tr *ngIf="!pedidos || pedidos.length === 0">
                 <td colspan="6" class="p-8 text-center text-stone-400 font-medium">Nenhum pedido encontrado.</td>
@@ -101,9 +122,13 @@
           </table>
         </div>
         <div class="p-4 bg-stone-50/50 border-t border-stone-100 flex justify-between items-center px-6">
-          <button [disabled]="page === 0" (click)="mudarPagina(page - 1)" class="px-4 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-50 disabled:opacity-40 transition-all cursor-pointer">← Anterior</button>
+          <button [disabled]="page === 0" (click)="mudarPagina(page - 1)"
+            class="px-4 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-50 disabled:opacity-40 transition-all cursor-pointer">←
+            Anterior</button>
           <span class="text-xs font-bold text-stone-500">Página {{ page + 1 }} de {{ totalPages }}</span>
-          <button [disabled]="page >= totalPages - 1" (click)="mudarPagina(page + 1)" class="px-4 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-50 disabled:opacity-40 transition-all cursor-pointer">Próxima →</button>
+          <button [disabled]="page >= totalPages - 1" (click)="mudarPagina(page + 1)"
+            class="px-4 py-2 bg-white border border-stone-200 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-50 disabled:opacity-40 transition-all cursor-pointer">Próxima
+            →</button>
         </div>
       </div>
     </div>
@@ -111,7 +136,8 @@
     <div *ngIf="activeTab === 'acompanhamento'" class="animate-fade-in">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-amber-50 p-5 rounded-3xl border border-amber-100 shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 bg-amber-500 text-white text-xl rounded-2xl flex items-center justify-center font-bold">🛎️</div>
+          <div class="w-12 h-12 bg-amber-500 text-white text-xl rounded-2xl flex items-center justify-center font-bold">
+            🛎️</div>
           <div>
             <p class="text-xs font-bold text-amber-700 uppercase tracking-wider">Aguardando Produção</p>
             <h3 class="text-2xl font-black text-amber-900">{{ qtdPendentesCard }} pedidos pendentes</h3>
@@ -120,42 +146,60 @@
       </div>
 
       <div class="flex flex-wrap gap-2 mb-6">
-        <button (click)="filtrarPedidosPorStatus('PENDENTE')" [class]="filtroStatusAtual === 'PENDENTE' ? 'px-4 py-2 bg-amber-500 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">⏳ Pendentes</button>
-        <button (click)="filtrarPedidosPorStatus('ENTREGUE')" [class]="filtroStatusAtual === 'ENTREGUE' ? 'px-4 py-2 bg-emerald-500 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">✅ Entregues / Baixados</button>
-        <button (click)="filtrarPedidosPorStatus('CANCELADO')" [class]="filtroStatusAtual === 'CANCELADO' ? 'px-4 py-2 bg-rose-500 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">❌ Cancelados</button>
-        <button (click)="filtrarPedidosPorStatus('TODOS')" [class]="filtroStatusAtual === 'TODOS' ? 'px-4 py-2 bg-stone-800 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">🌐 Mostrar Todos</button>
+        <button (click)="filtrarPedidosPorStatus('PENDENTE')"
+          [class]="filtroStatusAtual === 'PENDENTE' ? 'px-4 py-2 bg-amber-500 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">⏳
+          Pendentes</button>
+        <button (click)="filtrarPedidosPorStatus('ENTREGUE')"
+          [class]="filtroStatusAtual === 'ENTREGUE' ? 'px-4 py-2 bg-emerald-500 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">✅
+          Entregues / Baixados</button>
+        <button (click)="filtrarPedidosPorStatus('CANCELADO')"
+          [class]="filtroStatusAtual === 'CANCELADO' ? 'px-4 py-2 bg-rose-500 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">❌
+          Cancelados</button>
+        <button (click)="filtrarPedidosPorStatus('TODOS')"
+          [class]="filtroStatusAtual === 'TODOS' ? 'px-4 py-2 bg-stone-800 text-white font-bold rounded-xl text-xs' : 'px-4 py-2 bg-white border border-stone-200 text-stone-600 rounded-xl text-xs hover:bg-stone-100 cursor-pointer'">🌐
+          Mostrar Todos</button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div *ngFor="let item of pedidosFiltrados" class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div *ngFor="let item of pedidosFiltrados"
+          class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
 
-          <div [class]="'absolute top-0 left-0 w-3 h-full ' + ((item.status === 'ENTREGUE') ? 'bg-emerald-500' : (item.status === 'CANCELADO' ? 'bg-rose-500' : 'bg-amber-400'))"></div>
+          <div
+            [class]="'absolute top-0 left-0 w-3 h-full ' + ((item.status === 'ENTREGUE') ? 'bg-emerald-500' : (item.status === 'CANCELADO' ? 'bg-rose-500' : 'bg-amber-400'))">
+          </div>
 
           <div class="pl-2">
             <div class="flex justify-between items-start mb-4">
               <div>
                 <span class="text-xs font-black text-stone-400 uppercase tracking-widest">Pedido #{{ item.id }}</span>
-                <h4 class="text-xl font-black text-stone-800 mt-0.5">{{ item.cliente?.nome || 'Nome não informado' }}</h4>
+                <h4 class="text-xl font-black text-stone-800 mt-0.5">{{ item.cliente?.nome || 'Nome não informado' }}
+                </h4>
               </div>
-              <span [class]="'text-xs font-bold px-3 py-1.5 rounded-full uppercase ' + ((item.status === 'ENTREGUE') ? 'bg-emerald-50 text-emerald-600' : (item.status === 'CANCELADO' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'))">
+              <span
+                [class]="'text-xs font-bold px-3 py-1.5 rounded-full uppercase ' + ((item.status === 'ENTREGUE') ? 'bg-emerald-50 text-emerald-600' : (item.status === 'CANCELADO' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'))">
                 {{ item.status || 'PENDENTE' }}
               </span>
             </div>
 
             <div class="text-stone-600 text-sm space-y-1.5 mb-4">
-              <p>📅 <strong>Agendado para:</strong> {{ item.dataEncomenda | date:'dd/MM/yyyy' }} às {{ item.horarioEncomenda || '00:00' }}</p>
+              <p>📅 <strong>Agendado para:</strong> {{ item.dataEncomenda | date:'dd/MM/yyyy' }} às {{
+                item.horarioEncomenda || '00:00' }}</p>
               <p>📍 <strong>Local:</strong> {{ item.cliente?.endereco || 'Retirada no Local' }}</p>
               <p>📱 <strong>Contato:</strong> {{ item.cliente?.telefone || '-' }}</p>
-              <p>💳 <strong>Pagamento:</strong> <span [ngClass]="{'text-emerald-600 font-bold': item.formaPagamento === 'DINHEIRO', 'text-orange-500 font-bold': item.formaPagamento === 'PIX'}">{{ item.formaPagamento || 'PIX' }}</span></p>
+              <p>💳 <strong>Pagamento:</strong> <span
+                  [ngClass]="{'text-emerald-600 font-bold': item.formaPagamento === 'DINHEIRO', 'text-orange-500 font-bold': item.formaPagamento === 'PIX'}">{{
+                  item.formaPagamento || 'PIX' }}</span></p>
             </div>
 
             <div class="bg-stone-50 p-4 rounded-2xl mb-4">
-              <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2">Itens Solicitados:</span>
+              <span class="text-xs font-bold text-stone-400 uppercase tracking-wider block mb-2">Itens
+                Solicitados:</span>
               <ul class="text-sm text-stone-700 space-y-1 font-medium">
                 <li *ngFor="let doce of item.itens">
                   🍰 {{ doce.quantidade }}x — {{ doce.produto?.nome || 'Doce Especial' }}
                 </li>
-                <li *ngIf="!item.itens || item.itens.length === 0" class="text-stone-400 italic text-xs">Verificar itens no sistema original</li>
+                <li *ngIf="!item.itens || item.itens.length === 0" class="text-stone-400 italic text-xs">Verificar itens
+                  no sistema original</li>
               </ul>
             </div>
           </div>
@@ -166,16 +210,96 @@
               <span class="text-xl font-black text-stone-900">R$ {{ item.valorTotal?.toFixed(2) }}</span>
             </div>
             <div class="flex gap-2" *ngIf="!item.status || item.status === 'PENDENTE'">
-              <button (click)="darBaixaPedido(item.id)" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm cursor-pointer transition-all">✓ Entregue</button>
-              <button (click)="cancelarPedido(item.id)" class="bg-stone-100 hover:bg-rose-100 hover:text-rose-600 text-stone-500 font-bold text-xs px-3 py-2.5 rounded-xl cursor-pointer transition-all">✕ Cancelar</button>
+              <button (click)="darBaixaPedido(item.id)"
+                class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm cursor-pointer transition-all">✓
+                Entregue</button>
+              <button (click)="cancelarPedido(item.id)"
+                class="bg-stone-100 hover:bg-rose-100 hover:text-rose-600 text-stone-500 font-bold text-xs px-3 py-2.5 rounded-xl cursor-pointer transition-all">✕
+                Cancelar</button>
             </div>
           </div>
         </div>
       </div>
 
-      <div *ngIf="pedidosFiltrados.length === 0" class="bg-white p-12 text-center rounded-[2rem] border border-stone-100 text-stone-400 font-medium italic shadow-sm mt-4">
+      <div *ngIf="pedidosFiltrados.length === 0"
+        class="bg-white p-12 text-center rounded-[2rem] border border-stone-100 text-stone-400 font-medium italic shadow-sm mt-4">
         Nenhum pedido encontrado nesta categoria de filtro.
       </div>
+    </div>
+
+    <div *ngIf="activeTab === 'agenda'" class="animate-fade-in">
+      <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm mb-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h3 class="text-xl font-bold text-stone-800">Controle de Disponibilidade</h3>
+            <p class="text-sm text-stone-500 mt-1">Clique em um horário para ativar ou desativar. Horários com pedido
+              não podem ser alterados.</p>
+          </div>
+          <div class="flex items-center bg-stone-50 border border-stone-200 rounded-2xl px-4 py-2 shadow-sm">
+            <span class="text-xs font-bold text-stone-400 uppercase tracking-wider mr-2">Data:</span>
+            <input type="date" [(ngModel)]="dataAgenda" (change)="carregarAgendaDia()"
+              class="text-sm font-bold text-stone-700 bg-transparent outline-none cursor-pointer border-none p-1">
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="carregandoAgenda"
+        class="bg-white p-12 text-center rounded-[2rem] border border-stone-100 text-stone-400 font-medium">
+        Carregando agenda...
+      </div>
+
+      <ng-container *ngIf="!carregandoAgenda && agendaDia">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm">
+            <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Pedidos no dia</p>
+            <h3 class="text-2xl font-black text-stone-800 mt-1">{{ agendaDia.pedidosAtivos }} / {{
+              agendaDia.limiteDiario }}</h3>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm">
+            <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Status do dia</p>
+            <h3 class="text-lg font-black mt-1"
+              [ngClass]="agendaDia.diaBloqueado ? 'text-rose-600' : (agendaDia.diaLotado ? 'text-amber-600' : 'text-emerald-600')">
+              {{ agendaDia.diaBloqueado ? 'Desativado' : (agendaDia.diaLotado ? 'Lotado' : 'Ativo') }}
+            </h3>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-stone-100 shadow-sm flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-stone-400 uppercase tracking-wider">Dia inteiro</p>
+              <p class="text-sm text-stone-500 mt-1">{{ agendaDia.diaBloqueado ? 'Clique para reativar' : 'Clique para
+                desativar' }}</p>
+            </div>
+            <button (click)="alternarDiaInteiro()"
+              [class]="agendaDia.diaBloqueado ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-rose-500 hover:bg-rose-600 text-white'"
+              class="font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm cursor-pointer transition-all">
+              {{ agendaDia.diaBloqueado ? '✓ Ativar dia' : '✕ Desativar dia' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm">
+          <h4 class="text-sm font-bold text-stone-400 uppercase tracking-wider mb-4">Horários (07:00 – 18:00)</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <button *ngFor="let slot of agendaDia.horarios" (click)="alternarHorario(slot)"
+              [disabled]="slot.status === 'OCUPADO' || slot.status === 'LOTADO' || agendaDia.diaBloqueado"
+              [class]="getClasseSlot(slot.status)"
+              class="p-4 rounded-2xl border-2 font-bold text-sm transition-all flex flex-col items-center gap-1 cursor-pointer disabled:cursor-not-allowed">
+              <span class="text-base">{{ formatarHorario(slot.horario) }}</span>
+              <span class="text-[10px] uppercase tracking-wider opacity-80">{{ getLabelSlot(slot.status) }}</span>
+            </button>
+          </div>
+
+          <div class="flex flex-wrap gap-4 mt-6 pt-4 border-t border-stone-100 text-xs font-bold text-stone-500">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+              Disponível</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-400"></span>
+              Desativado</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Com
+              pedido</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-stone-300"></span> Dia
+              lotado</span>
+          </div>
+        </div>
+      </ng-container>
     </div>
 
   </div>
