@@ -38,7 +38,7 @@ public class ConfeitariaApplication {
                     criarProduto("Empada", 1.80, Categoria.SALGADOS_ASSADOS),
                     criarProduto("Pastel de Forno", 1.80, Categoria.SALGADOS_ASSADOS),
                     criarProduto("Pãozinho recheado", 1.80, Categoria.SALGADOS_ASSADOS),
-                    criarProduto("Pãozinho sem recheio", 1.80, Categoria.SALGADOS_ASSADOS),
+                    criarProduto("Pãozinho sem recheio", 1.50, Categoria.SALGADOS_ASSADOS),
                     
                     // doces finos
                     criarProduto("Ameixa", 2.00, Categoria.DOCES_FINOS),
@@ -68,6 +68,13 @@ public class ConfeitariaApplication {
 
                 repository.saveAll(produtos);
             }
+
+            repository.findByNome("Pãozinho sem recheio").ifPresent(produto -> {
+                if (!Double.valueOf(1.50).equals(produto.getPrecoUnitario())) {
+                    produto.setPrecoUnitario(1.50);
+                    repository.save(produto);
+                }
+            });
         };
     }
 
