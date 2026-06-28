@@ -48,7 +48,7 @@ export class OrderComponent implements OnInit {
     { id: 10, nome: 'Empada', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
     { id: 11, nome: 'Pastel de Forno', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS', sabores: [SaborOpcao.FRANGO, SaborOpcao.CARNE], saborSelecionado: SaborOpcao.FRANGO },
     { id: 12, nome: 'Pãozinho recheado', precoUnitario: 1.80, categoria: 'SALGADOS_ASSADOS' },
-    { id: 13, nome: 'Pãozinho sem recheio', precoUnitario: 1.80, font_weight: 'bold', categoria: 'SALGADOS_ASSADOS' },
+    { id: 13, nome: 'Pãozinho sem recheio', precoUnitario: 1.50, font_weight: 'bold', categoria: 'SALGADOS_ASSADOS' },
 
     // Doces finos
     { id: 14, nome: 'Ameixa', precoUnitario: 2.00, categoria: 'DOCES_FINOS' },
